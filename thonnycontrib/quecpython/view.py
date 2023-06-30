@@ -122,14 +122,22 @@ class QuecView(tk.Frame):
 
     def open_serial_handler(self):
         if self.serial is None:
-            # TODO: 流控未处理: self.flow_control_combobox
-            self.serial = Serial(
-                port=self.port_combobox.get().split('-')[0],
-                baudrate=int(self.baudrate_combobox.get()),
-                bytesize=int(self.bytesize_combobox.get()),
-                parity=self.parity_combobox.get(),
-                stopbits=int(self.stopbits_combobox.get())
-            )
+            try:
+                # TODO: 流控未处理: self.flow_control_combobox
+                self.serial = Serial(
+                    port=self.port_combobox.get().split('-')[0],
+                    baudrate=int(self.baudrate_combobox.get()),
+                    bytesize=int(self.bytesize_combobox.get()),
+                    parity=self.parity_combobox.get(),
+                    stopbits=int(self.stopbits_combobox.get())
+                )
+            except Exception as e:
+                messagebox.showerror(
+                    title='Open Port Failed!',
+                    message='port open failed!\ndetails: {}'.format(str(e)),
+                    master=self
+                )
+                return
             self.open_serial_button['text'] = '关闭串口'
             self.set_com_widgets_state(tk.DISABLED)
         else:
