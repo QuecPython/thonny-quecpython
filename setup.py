@@ -18,7 +18,7 @@ setup(
     author='dustin.wei',
     author_email='dustin.wei@quectel.com',
     keywords=["QuecPython", "quecpython", "QuecPython Kits", "quecpython kits"],
-    url='http://github.com/quecpython',
+    url='https://github.com/QuecPython/thonny-quecpython',
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
