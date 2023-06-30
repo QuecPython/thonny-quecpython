@@ -10,9 +10,9 @@ def readme():
 setup(
     name='thonny-quecpython',
     version='0.1.0',
-    description='quecpython programing kits',
+    description='quecpython programing kits for thonny',
     long_description=readme(),
-    long_description_content_type='text/markdown',
+    long_description_content_type='text/x-rst',
     python_requires='>=3.7',
     license="MIT License",
     author='dustin.wei',
