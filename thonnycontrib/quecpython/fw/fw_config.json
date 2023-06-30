@@ -1,0 +1,116 @@
+{
+	"firmware":
+		{
+			"pack_dir"					: "mount",
+			"mpy_dir"					: "mpy",
+			"backup_dir"				: "backup",
+			"block_size"				: "4096",
+			"read_size"					: "4096",
+			"progress_size"				: "4096",
+			"filesystem_size"			: "5242880",
+			"filesystem_backup_size"	: "204800",
+			"cnlb_filesystem_size"		: "385024",
+			"cnlb_filesystem_backup_size": "102400",
+			"image_file_path"			: "fw/images/customer_fs.bin",
+			"image_file_backup_path"	: "fw/images/customer_backup_fs.bin",
+			"file_size"					: "5MB",
+			"file_backup_size"			: "3MB",
+			"vid_pid_work"				: {"EC600SCNAA":"2C7C:6001",
+										   "EC600SCNLB":"2C7C:6002",
+										   "EC600UCNLB":"2C7C:0901",
+										   "BC25": "10C4:EA70",
+										   "EC800GCNGA": "2C7C:0904"
+										  },
+			"vid_pid_dwload"			: {"EC600SCNAA":"2ECC:3017",
+										   "EC600SCNLB":"2ECC:3004",
+										   "EC600UCNLB":"0525:A4A7",
+										   "BC25": "10C4:EA70",
+										   "EC800GCNGA": "1782:4D16"
+										   },
+			"Quectel_ENHANCED_Port"		: "x.0",
+			"Quectel_STANDARD_Port"		: "x.1",
+			"Quectel_USB_DIAG_Port"		: "x.2",
+			"Quectel_USB_AT_Port"		: "x.3",
+			"USB_Serial_Device"			: "x.5",
+			"Quectel_Download_Port"		: "2ECC:3017"
+		},
+	"NB":
+	{
+		"FS_PY_U_FLASH_START": 			"0x83C0000",
+		"FS_PY_U_FLASH_SIZE": 			"0x20000",
+		"FS_PY_B_FLASH_START": 			"0x83E0000",
+		"FS_PY_B_FLASH_SIZE": 			"0x10000"
+	},
+	"BG95":
+	{
+		"BG95_FS_PY_B_FLASH_SIZE": 			"0x40000"
+	},
+	"unisoc_boards":
+		{
+		"CONFIG_FDL1_IMAGE_START"			: {	"EC200UCNAA":"0x8000c0",
+												"EC200UCNLB":"0x8000c0",
+												"EC200UEUAB":"0x8000c0",
+												"EC600UCNLB":"0x8000c0",
+												"EC600UCNLC":"0x8000c0",
+												"EC600UEUAB":"0x8000c0"
+										   },
+		"CONFIG_FDL1_IMAGE_SIZE"			: { "EC200UCNAA":"0xff40",
+												"EC200UCNLB":"0xff40",
+												"EC200UEUAB":"0xff40",
+												"EC600UCNLB":"0xff40",
+												"EC600UCNLC":"0xff40",
+												"EC600UEUAB":"0xff40"
+										   },
+		"CONFIG_FDL2_IMAGE_START"			: { "EC200UCNAA":"0x810000",
+												"EC200UCNLB":"0x810000",
+												"EC200UEUAB":"0x810000",
+												"EC600UCNLB":"0x810000",
+												"EC600UCNLC":"0x810000",
+												"EC600UEUAB":"0x810000"
+										   },
+		"CONFIG_FDL2_IMAGE_SIZE"			: { "EC200UCNAA":"0x30000",
+												"EC200UCNLB":"0x30000",
+												"EC200UEUAB":"0x30000",
+												"EC600UCNLB":"0x30000",
+												"EC600UCNLC":"0x30000",
+												"EC600UEUAB":"0x30000"
+										   },
+		"CONFIG_FS_PY_U_FLASH_ADDRESS"		: { "EC200UCNAA":"0x60420000",
+												"EC200UCNLB":"0x60420000",
+												"EC200UEUAB":"0x60420000",
+												"EC600UCNLB":"0x60420000",
+												"EC600UCNLC":"0x60420000",
+												"EC600UEUAB":"0x60420000"
+										   },
+		"CONFIG_FS_PY_U_FLASH_SIZE"			: { "EC200UCNAA":"0x60000",
+												"EC200UCNLB":"0x60000",
+												"EC200UEUAB":"0x60000",
+												"EC600UCNLB":"0x60000",
+												"EC600UCNLC":"0x60000",
+												"EC600UEUAB":"0x60000"
+										   },
+		"CONFIG_FS_PY_B_FLASH_ADDRESS"		: { "EC200UCNAA":"0x60480000",
+												"EC200UCNLB":"0x60480000",
+												"EC200UEUAB":"0x60480000",
+												"EC600UCNLB":"0x60480000",
+												"EC600UCNLC":"0x60480000",
+												"EC600UEUAB":"0x60480000"
+										   },
+		"CONFIG_FS_PY_B_FLASH_SIZE"			: { "EC200UCNAA":"0x20000",
+												"EC200UCNLB":"0x20000",
+												"EC200UEUAB":"0x20000",
+												"EC600UCNLB":"0x20000",
+												"EC600UCNLC":"0x20000",
+												"EC600UEUAB":"0x20000"
+										   }
+		},
+	"net_status":
+		{
+			"Not_Registered"			: "Network registration status: Not registered",
+			"Registered"				: "Network registration status: Registered",
+			"Registered_Denied"			: "Network registration status: Registration denied",
+			"Unknown"					: "Network registration status: Unknown",
+			"Registration_Limited"      : "Network registration status: Registration limited",
+			"Error"                     : "Network registration status: Error"
+		}
+}
