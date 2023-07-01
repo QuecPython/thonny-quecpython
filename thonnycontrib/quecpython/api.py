@@ -12,7 +12,6 @@ class BaseApi(object):
 
     # status code
     OK = 0x00
-    ERROR = 0x01
     EXIT = 0x02
 
     # transmission payload
@@ -28,16 +27,10 @@ class BaseApi(object):
             payload=self.Payload(code=self.OK, data=data, exec=None)
         )
 
-    def error(self, e):
+    def exit(self, exec_=None):
         pub.sendMessage(
             self.UPDATE_TOPIC,
-            payload=self.Payload(code=self.ERROR, data=None, exec=e)
-        )
-
-    def exit(self):
-        pub.sendMessage(
-            self.UPDATE_TOPIC,
-            payload=self.Payload(code=self.EXIT, data=None, exec=None)
+            payload=self.Payload(code=self.EXIT, data=None, exec=exec_)
         )
 
     def run(self):
@@ -47,8 +40,8 @@ class BaseApi(object):
         try:
             self.run()
         except Exception as e:
-            self.error(e)
-        finally:
+            self.exit(exec_=e)
+        else:
             self.exit()
 
 
@@ -65,6 +58,8 @@ class DownLoadFWApi(BaseApi):
         for data in fw_download_handler.download():
             self.emit(data)
 
-    def error(self, e):
-        error_message = '{}\nsee log: {}'.format(str(e), DownloadLogFile.log_file_path)
-        super().error(Exception(error_message))
+    def exit(self, exec_=None):
+        if exec_ is not None:
+            error_message = '{}\nsee log: {}'.format(str(exec_), DownloadLogFile.log_file_path)
+            exec_ = Exception(error_message)
+        super().exit(exec_=exec_)

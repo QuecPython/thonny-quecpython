@@ -263,21 +263,22 @@ class QuecView(tk.Frame):
             self.bar["value"] = payload.data
             self.log_stringvar.set('downloading...')
             self.update()
-        elif payload.code == DownLoadFWApi.ERROR:
-            messagebox.showerror(
-                title='Error',
-                message='Download Firmware Error!\n{}'.format(str(payload.exec)),
-                master=self
-            )
         elif payload.code == DownLoadFWApi.EXIT:
-            self.log_stringvar.set('download process exited.')
-            self.fw_file_choose_button.config(state=tk.ACTIVE)
-            self.fw_download_button.config(state=tk.ACTIVE)
-            messagebox.showinfo(
-                title='Information',
-                message='Download Firmware Progress Finished!',
-                master=self
-            )
+            if payload.exec:
+                messagebox.showerror(
+                    title='Error',
+                    message='Download Firmware Error!\n{}'.format(str(payload.exec)),
+                    master=self
+                )
+            else:
+                self.log_stringvar.set('download process exited.')
+                self.fw_file_choose_button.config(state=tk.ACTIVE)
+                self.fw_download_button.config(state=tk.ACTIVE)
+                messagebox.showinfo(
+                    title='Information',
+                    message='Download Firmware Progress Finished!',
+                    master=self
+                )
         else:
             # nothing
             pass
