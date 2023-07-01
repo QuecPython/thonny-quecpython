@@ -15,5 +15,4 @@ Install most recent stable with "pip install thonny-quecpython".
 Useful links:
 
 - Project on PyPI: https://pypi.org/project/thonny-quecpython/
-- The documentation for latest code is at: https://github.com/QuecPython/thonny-quecpython/blob/master/README.md
-
+- The documentation for latest code is at: https://github.com/QuecPython/thonny-quecpython
