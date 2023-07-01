@@ -7,9 +7,15 @@ def readme():
     return content
 
 
+def get_version():
+    with open('VERSION', encoding='utf-8') as f:
+        version = f.read()
+    return version
+
+
 setup(
     name='thonny-quecpython',
-    version='0.1.2',
+    version=get_version(),
     description='quecpython programing kits for thonny',
     long_description=readme(),
     long_description_content_type='text/x-rst',
