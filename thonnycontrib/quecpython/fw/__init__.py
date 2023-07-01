@@ -152,9 +152,9 @@ def run_cmd(cmd, process_type, cwd):
 
 class FwDownloadHandler(object):
 
-    def __init__(self, firmware_file_path, comport):
+    def __init__(self, firmware_file_path, com_info):
         self.fw_filepath = Path(firmware_file_path)
-        self.comport = comport
+        self.com_info = com_info
 
     def download(self):
         logger.info('enter FwDownloadHandler.download method.')
@@ -286,7 +286,7 @@ class FwDownloadHandler(object):
             logger.info('------------------unisoc downloading upgrade package------------------')
             downloadProcess = 'unisoc'
         elif self.fw_filepath.suffix == ".lod":
-            cmd = [download_exe_path, self.comport[3:], '115200', fw_filepath]
+            cmd = [download_exe_path, self.com_info['port'][3:], self.com_info['baudrate'], fw_filepath]
             logger.info('------------------NB downloading upgrade package------------------')
             downloadProcess = 'NB'
         elif self.fw_filepath.suffix == ".blf":
@@ -294,11 +294,14 @@ class FwDownloadHandler(object):
             logger.info('------------------200A download downloading factory package(blf)------------------')
             downloadProcess = '200A'
         elif self.fw_filepath.suffix == ".mbn":
-            cmd = [download_exe_path, self.comport[3:], '115200', fw_filepath]
+            cmd = [download_exe_path, self.com_info['port'][3:], self.com_info['baudrate'], fw_filepath]
             logger.info('------------------BG95 download downloading factory package(mbn)------------------')
             downloadProcess = 'BG95'
         else:
-            cmd = [download_exe_path, '-p', self.comport, '-a', '-q', '-r', '-s', '115200', fw_filepath]
+            cmd = [
+                download_exe_path, '-p', self.com_info['port'],
+                '-a', '-q', '-r', '-s', self.com_info['baudrate'], fw_filepath
+            ]
             logger.info('------------------adownload downloading factory package------------------')
             downloadProcess = '"progress" :'
 

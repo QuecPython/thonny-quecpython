@@ -65,7 +65,7 @@ class QuecView(tk.Frame):
 
         self.open_serial_button = tk.Button(
             serial_label_frame, text='打开串口',
-            command=self.open_serial_handler
+            command=self.switch_serial_handler
         )
         self.open_serial_button.grid(row=0, column=12, sticky=tk.EW, padx=(5, 5), pady=(5, 5))
         # <<<
@@ -79,6 +79,7 @@ class QuecView(tk.Frame):
         fw_file_path_label = tk.Label(fw_label_frame, text='固件文件:')
         fw_file_path_label.grid(row=1, column=0, sticky=tk.EW, padx=(5, 0), pady=(5, 5))
         self.firmware_file_path_stringvar = tk.StringVar()
+        self.firmware_file_path_stringvar.trace_variable('w', self.on_fw_file_path_write)
         fw_file_path_entry = tk.Entry(fw_label_frame, textvariable=self.firmware_file_path_stringvar, state='readonly')
         fw_file_path_entry.grid(row=1, column=1, columnspan=11, sticky=tk.EW, padx=(0, 5), pady=(5, 5))
 
@@ -120,7 +121,7 @@ class QuecView(tk.Frame):
         self.serial = None
         # <<<
 
-    def open_serial_handler(self):
+    def switch_serial_handler(self):
         if self.serial is None:
             try:
                 # TODO: 流控未处理: self.flow_control_combobox
@@ -167,10 +168,6 @@ class QuecView(tk.Frame):
         else:
             self.port_combobox.current(0)
 
-    def ask_for_firmware_file_path(self):
-        firmware_file_path = filedialog.askopenfilename(title='请选择文件')
-        self.firmware_file_path_stringvar.set(firmware_file_path)
-
     def get_validated_com_port(self, firmware_file_path):
         comport = get_com_port(Path(firmware_file_path))
         logger.info('detect comport is: {}'.format(comport))
@@ -181,6 +178,8 @@ class QuecView(tk.Frame):
                 master=self
             )
             return
+
+        rv = {'port': comport, 'baudrate': '115200'}
 
         if comport in ("NB_DOWNLOAD", "mbn_DOWNLOAD"):
             if (self.serial is None) or (not self.serial.isOpen()):
@@ -200,11 +199,24 @@ class QuecView(tk.Frame):
                         self.log_stringvar.set('progress canceled!')
                         return
 
-                self.open_serial_handler()
-                comport = self.port_combobox.get().split('-')[0]
+                self.switch_serial_handler()
+                rv['port'] = self.port_combobox.get().split('-')[0]
+                rv['baudrate'] = self.baudrate_combobox.get()
 
         logger.info('real comport is: {}'.format(comport))
-        return comport
+        return rv
+
+    def ask_for_firmware_file_path(self):
+        firmware_file_path = filedialog.askopenfilename(title='请选择文件')
+        self.firmware_file_path_stringvar.set(firmware_file_path)
+
+    def on_fw_file_path_write(self, *args, **kwargs):
+        firmware_file_path = self.firmware_file_path_stringvar.get()
+        comport = get_com_port(Path(firmware_file_path))
+        if comport in ("NB_DOWNLOAD", "mbn_DOWNLOAD"):
+            self.set_com_widgets_state(tk.ACTIVE)
+        else:
+            self.set_com_widgets_state(tk.DISABLED)
 
     def get_validated_fw_file_path(self):
         firmware_file_path = self.firmware_file_path_stringvar.get()
@@ -231,12 +243,12 @@ class QuecView(tk.Frame):
         if not firmware_file_path:
             return
 
-        comport = self.get_validated_com_port(firmware_file_path)
-        if not comport:
+        com_info = self.get_validated_com_port(firmware_file_path)
+        if not com_info:
             return
 
         self.download_widgets_ready()
-        Thread(target=DownLoadFWApi(firmware_file_path, comport)).start()
+        Thread(target=DownLoadFWApi(firmware_file_path, com_info)).start()
 
     def update_progress(self, payload):
         if payload.code == DownLoadFWApi.OK:

@@ -55,13 +55,13 @@ class BaseApi(object):
 class DownLoadFWApi(BaseApi):
     UPDATE_TOPIC = 'UPDATE_PROGRESS'
 
-    def __init__(self, firmware_file_path, comport):
+    def __init__(self, firmware_file_path, com_info):
         self.firmware_file_path = firmware_file_path
-        self.comport = comport
+        self.com_info = com_info
 
     def run(self):
-        logger.info('enter download_firmware_api function. args: {}'.format((self.firmware_file_path, self.comport)))
-        fw_download_handler = FwDownloadHandler(self.firmware_file_path, self.comport)
+        logger.info('enter download_firmware_api function. args: {}'.format((self.firmware_file_path, self.com_info)))
+        fw_download_handler = FwDownloadHandler(self.firmware_file_path, self.com_info)
         for data in fw_download_handler.download():
             self.emit(data)
 
