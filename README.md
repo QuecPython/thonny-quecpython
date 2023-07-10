@@ -70,3 +70,6 @@ install manually from local file.
 3. or Go to <font color='orange'>`Thonny → Views → QuecPython Kits`</font>.
 4. Select <font color='orange'>`QuecPython Kits`</font>
 
+## Thonny Open Source
+
+get more infomation about Thonny from: https://github.com/thonny/thonny.
