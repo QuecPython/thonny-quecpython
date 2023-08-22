@@ -208,7 +208,8 @@ class QuecView(tk.Frame):
 
     def ask_for_firmware_file_path(self):
         firmware_file_path = filedialog.askopenfilename(title='请选择文件')
-        self.firmware_file_path_stringvar.set(firmware_file_path)
+        if firmware_file_path:
+            self.firmware_file_path_stringvar.set(firmware_file_path)
 
     def on_fw_file_path_write(self, *args, **kwargs):
         firmware_file_path = self.firmware_file_path_stringvar.get()
