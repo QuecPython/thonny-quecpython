@@ -40,6 +40,9 @@ setup(
             "exes/NB/*",
             "exes/rda/*",
         ],
+        "thonnycontrib.quecpython.locale": [
+            "zh_CN.json",
+        ],
     },
     install_requires=[
         'thonny>=4.1.1',
