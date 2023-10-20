@@ -23,7 +23,7 @@ class QuecView(tk.Frame):
         super().__init__(*args, **kwargs)
 
         # >>> 串口配置
-        serial_label_frame = tk.LabelFrame(master=self, text='Serial Settings', labelanchor=tk.N)
+        serial_label_frame = tk.LabelFrame(master=self, text=tr('Serial Settings'), labelanchor=tk.N)
         serial_label_frame.pack(anchor=tk.NW, expand=False, fill=tk.X, pady=(5, 5))
         for index in range(14):
             serial_label_frame.columnconfigure(index, weight=1)
