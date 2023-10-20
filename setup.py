@@ -41,7 +41,7 @@ setup(
             "exes/rda/*",
         ],
         "thonnycontrib.quecpython.locale": [
-            "zh_CN.json",
+            "zh_CN.lag",
         ],
     },
     install_requires=[
