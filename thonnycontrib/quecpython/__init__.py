@@ -1,18 +1,18 @@
 from thonny import get_workbench
-from thonny.languages import tr
 from thonny.plugins.micropython.mp_front import (
     add_micropython_backend,
     GenericBareMetalMicroPythonConfigPage,
     GenericBareMetalMicroPythonProxy,
 )
 from .view import QuecView, open_quecview
+from .locale import tr
 
 
 def load_plugin():
     add_micropython_backend(
         "GenericQuecPython",
         GenericBareMetalMicroPythonProxy,
-        tr("QuecPython (generic)"),
+        "QuecPython (generic)",
         GenericBareMetalMicroPythonConfigPage,
         sort_key="51",
     )

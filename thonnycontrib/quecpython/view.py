@@ -10,6 +10,7 @@ from tkinter import filedialog, messagebox
 from thonny import get_workbench
 from .api import DownLoadFWApi
 from .fw.utils import get_com_port
+from .locale import tr
 
 
 logger = getLogger(__name__)
@@ -27,56 +28,56 @@ class QuecView(tk.Frame):
         for index in range(14):
             serial_label_frame.columnconfigure(index, weight=1)
 
-        serial_label = tk.Label(serial_label_frame, text='Serial:')
+        serial_label = tk.Label(serial_label_frame, text=tr('Serial')+':')
         serial_label.grid(row=0, column=0, sticky=tk.N, padx=(5, 0), pady=(5, 5))
         self.port_combobox = ttk.Combobox(master=serial_label_frame, postcommand=self.list_valid_ports)
         self.port_combobox.grid(row=0, column=1, ipadx=40, sticky=tk.W, padx=(0, 5), pady=(5, 5))
         self.list_valid_ports()
 
-        baudrate_label = tk.Label(serial_label_frame, text='Baudrate:')
+        baudrate_label = tk.Label(serial_label_frame, text=tr('Baudrate')+':')
         baudrate_label.grid(row=0, column=2, sticky=tk.N, padx=(5, 0), pady=(5, 5))
         self.baudrate_combobox = ttk.Combobox(master=serial_label_frame, values=Serial.BAUDRATES, width=7)
         self.baudrate_combobox.set('115200')
         self.baudrate_combobox.grid(row=0, column=3, sticky=tk.W, padx=(0, 5), pady=(5, 5))
 
-        stopbits_label = tk.Label(serial_label_frame, text='Stopbits:')
+        stopbits_label = tk.Label(serial_label_frame, text=tr('Stopbits')+':')
         stopbits_label.grid(row=0, column=4, sticky=tk.N, padx=(5, 0), pady=(5, 5))
         self.stopbits_combobox = ttk.Combobox(master=serial_label_frame, values=Serial.STOPBITS, width=5)
         self.stopbits_combobox.set('1')
         self.stopbits_combobox.grid(row=0, column=5, sticky=tk.W, padx=(0, 5), pady=(5, 5))
 
-        parity_label = tk.Label(serial_label_frame, text='Parity:')
+        parity_label = tk.Label(serial_label_frame, text=tr('Parity')+':')
         parity_label.grid(row=0, column=6, sticky=tk.N, padx=(5, 0), pady=(5, 5))
         self.parity_combobox = ttk.Combobox(master=serial_label_frame, values=Serial.PARITIES, width=5)
         self.parity_combobox.set('N')
         self.parity_combobox.grid(row=0, column=7, sticky=tk.W, padx=(0, 5), pady=(5, 5))
 
-        bytesize_label = tk.Label(serial_label_frame, text='Bytesize:')
+        bytesize_label = tk.Label(serial_label_frame, text=tr('Bytesize')+':')
         bytesize_label.grid(row=0, column=8, sticky=tk.N, padx=(5, 0), pady=(5, 5))
         self.bytesize_combobox = ttk.Combobox(master=serial_label_frame, values=Serial.BYTESIZES, width=5)
         self.bytesize_combobox.set('8')
         self.bytesize_combobox.grid(row=0, column=9, sticky=tk.W, padx=(0, 5), pady=(5, 5))
 
-        flow_control_label = tk.Label(serial_label_frame, text='Flow:')
+        flow_control_label = tk.Label(serial_label_frame, text=tr('Flow')+':')
         flow_control_label.grid(row=0, column=10, sticky=tk.N, padx=(5, 0), pady=(5, 5))
         self.flow_control_combobox = ttk.Combobox(master=serial_label_frame, values=['No', 'HW', 'SW'], width=5)
         self.flow_control_combobox.set('No')
         self.flow_control_combobox.grid(row=0, column=11, sticky=tk.W, padx=(0, 5), pady=(5, 5))
 
         self.open_serial_button = tk.Button(
-            serial_label_frame, text='Open',
+            serial_label_frame, text=tr('OpenPort'),
             command=self.switch_serial_handler
         )
         self.open_serial_button.grid(row=0, column=12, sticky=tk.EW, padx=(5, 5), pady=(5, 5))
         # <<<
 
         # >>> 固件下载
-        fw_label_frame = tk.LabelFrame(master=self, text='Firmware Download', labelanchor=tk.N)
+        fw_label_frame = tk.LabelFrame(master=self, text=tr('Firmware Download'), labelanchor=tk.N)
         fw_label_frame.pack(anchor=tk.NW, expand=False, fill=tk.X, pady=(5, 5))
         for index in range(14):
             fw_label_frame.columnconfigure(index, weight=1)
 
-        fw_file_path_label = tk.Label(fw_label_frame, text='firmware path:')
+        fw_file_path_label = tk.Label(fw_label_frame, text=tr('firmware path')+':')
         fw_file_path_label.grid(row=1, column=0, sticky=tk.EW, padx=(5, 0), pady=(5, 5))
         self.firmware_file_path_stringvar = tk.StringVar()
         self.firmware_file_path_stringvar.trace_variable('w', self.on_fw_file_path_write)
@@ -84,18 +85,18 @@ class QuecView(tk.Frame):
         fw_file_path_entry.grid(row=1, column=1, columnspan=11, sticky=tk.EW, padx=(0, 5), pady=(5, 5))
 
         self.fw_file_choose_button = tk.Button(
-            fw_label_frame, text='select',
+            fw_label_frame, text=tr('select'),
             command=self.ask_for_firmware_file_path
         )
         self.fw_file_choose_button.grid(row=1, column=12, sticky=tk.EW, padx=(5, 5), pady=(5, 5))
 
         self.fw_download_button = tk.Button(
-            fw_label_frame, text='download',
+            fw_label_frame, text=tr('download'),
             command=self.download_firmware_handler
         )
         self.fw_download_button.grid(row=1, column=13, sticky=tk.EW, padx=(5, 5), pady=(5, 5))
 
-        progress_label = tk.Label(fw_label_frame, text='progress:')
+        progress_label = tk.Label(fw_label_frame, text=tr('progress')+':')
         progress_label.grid(row=2, column=0, sticky=tk.EW, padx=(5, 0), pady=(5, 5))
         self.bar = ttk.Progressbar(master=fw_label_frame, maximum=100)
         self.bar.grid(row=2, column=1, columnspan=11, sticky=tk.EW, padx=(0, 5), pady=(5, 5))
@@ -105,10 +106,10 @@ class QuecView(tk.Frame):
         progress_entry = tk.Label(fw_label_frame, textvariable=self.progress_stringvar)
         progress_entry.grid(row=2, column=12, sticky=tk.W, padx=(5, 5), pady=(5, 5))
 
-        log_label = tk.Label(fw_label_frame, text='logging:')
+        log_label = tk.Label(fw_label_frame, text=tr('logging')+':')
         log_label.grid(row=3, column=0, sticky=tk.EW, padx=(5, 0), pady=(5, 5))
         self.log_stringvar = tk.StringVar()
-        self.log_stringvar.set('ready')
+        self.log_stringvar.set(tr('ready'))
         log_entry = tk.Label(fw_label_frame, textvariable=self.log_stringvar)
         log_entry.grid(row=3, column=1, sticky=tk.W, padx=(0, 5), pady=(5, 5))
         # <<<
@@ -236,7 +237,7 @@ class QuecView(tk.Frame):
         self.fw_download_button.config(state=tk.DISABLED)
         self.bar["value"] = 0
         self.progress_stringvar.set("{}%".format(0))
-        self.log_stringvar.set("ready")
+        self.log_stringvar.set(tr("ready"))
         self.update()
 
     def download_firmware_handler(self):
@@ -255,27 +256,27 @@ class QuecView(tk.Frame):
         if payload.code == DownLoadFWApi.OK:
             if payload.data == "RESET":
                 messagebox.showinfo(
-                    title='Respect!',
-                    message='请按RESET重启板子，点击“确定”继续。',
+                    title=tr('Respect'),
+                    message=tr('click RESET button, and then click "OK" continue.'),
                     master=self
                 )
                 return
             self.progress_stringvar.set("{}%".format(payload.data))
             self.bar["value"] = payload.data
-            self.log_stringvar.set('downloading...')
+            self.log_stringvar.set(tr('downloading...'))
             self.update()
         elif payload.code == DownLoadFWApi.EXIT:
             if payload.exec:
                 messagebox.showerror(
-                    title='Error',
-                    message='Download Firmware Error!\n{}'.format(str(payload.exec)),
+                    title=tr('Error'),
+                    message='{}!\n{}'.format(tr('Download Firmware Error'), str(payload.exec)),
                     master=self
                 )
             else:
-                self.log_stringvar.set('download process exited.')
+                self.log_stringvar.set(tr('download process exited.'))
                 messagebox.showinfo(
-                    title='Information',
-                    message='Download Firmware Progress Finished!',
+                    title=tr('Information'),
+                    message=tr('Download Firmware Progress Finished!'),
                     master=self
                 )
             self.fw_file_choose_button.config(state=tk.ACTIVE)
