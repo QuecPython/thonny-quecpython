@@ -8,6 +8,7 @@
   "Bytesize": "数据位",
   "Flow": "流控",
   "OpenPort": "打开串口",
+  "ClosePort": "关闭串口",
   "Firmware Download": "固件下载",
   "firmware path": "固件路径",
   "select": "选择文件",
@@ -22,5 +23,13 @@
   "download process exited.": "下载进程已退出。",
   "Information": "通知",
   "Download Firmware Progress Finished!": "固件下载成功！",
-  "downloading...": "正在下载..."
+  "downloading...": "正在下载...",
+  "Open Port Failed!": "打开串口失败！",
+  "Device not found!": "未检测到与该固件匹配的设备（模块），请连接对应的设备再重试。",
+  "Choose a COM Port": "选择一个串口",
+  "please open one COM Port for downloading.": "请选择并打开一个串口",
+  "Long press Power button, and then click ok.": "请长按Power键后，点击“确定”继续。",
+  "progress canceled!": "取消下载。",
+  "choose firmware file": "请选择固件文件",
+  "no firmware file path selected!": "未选择固件文件！"
 }

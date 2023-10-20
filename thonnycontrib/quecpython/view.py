@@ -135,18 +135,18 @@ class QuecView(tk.Frame):
                 )
             except Exception as e:
                 messagebox.showerror(
-                    title='Open Port Failed!',
-                    message='port open failed!\ndetails: {}'.format(str(e)),
+                    title=tr('Open Port Failed!'),
+                    message='{}'.format(str(e)),
                     master=self
                 )
                 return
-            self.open_serial_button['text'] = 'Close'
+            self.open_serial_button['text'] = tr('ClosePort')
             self.set_com_widgets_state(tk.DISABLED)
         else:
             if self.serial.isOpen():
                 self.serial.close()
                 self.serial = None
-            self.open_serial_button['text'] = 'Open'
+            self.open_serial_button['text'] = tr('OpenPort')
             self.set_com_widgets_state(tk.ACTIVE)
 
     def set_com_widgets_state(self, state):
@@ -174,8 +174,8 @@ class QuecView(tk.Frame):
         logger.info('detect comport is: {}'.format(comport))
         if comport is None:
             messagebox.showerror(
-                title='Choose a COM Port',
-                message='未检测到与该固件匹配的设备（模块），请连接对应的设备再重试。',
+                title=tr('Choose a COM Port'),
+                message=tr('Device not found!'),
                 master=self
             )
             return
@@ -185,19 +185,19 @@ class QuecView(tk.Frame):
         if comport in ("NB_DOWNLOAD", "mbn_DOWNLOAD"):
             if (self.serial is None) or (not self.serial.isOpen()):
                 messagebox.showinfo(
-                    title='Choose a COM Port',
-                    message='please open one COM Port for downloading.',
+                    title=tr('Choose a COM Port'),
+                    message=tr('please open one COM Port for downloading.'),
                     master=self
                 )
                 return
             else:
                 if comport == "NB_DOWNLOAD":
                     if not messagebox.askyesno(
-                        title='Respect!',
-                        message='请长按Power键后，点击“确定”继续。',
+                        title=tr('Respect'),
+                        message=tr('Long press Power button, and then click ok.'),
                         master=self
                     ):
-                        self.log_stringvar.set('progress canceled!')
+                        self.log_stringvar.set(tr('progress canceled!'))
                         return
 
                 self.switch_serial_handler()
@@ -208,7 +208,7 @@ class QuecView(tk.Frame):
         return rv
 
     def ask_for_firmware_file_path(self):
-        firmware_file_path = filedialog.askopenfilename(title='choose firmware file')
+        firmware_file_path = filedialog.askopenfilename(title=tr('choose firmware file'))
         if firmware_file_path:
             self.firmware_file_path_stringvar.set(firmware_file_path)
 
@@ -225,8 +225,8 @@ class QuecView(tk.Frame):
         logger.info('firmware_file_path: {}'.format(firmware_file_path))
         if not firmware_file_path:
             messagebox.showerror(
-                title='Error',
-                message='not firmware file path selected!',
+                title=tr('Error'),
+                message=tr('no firmware file path selected!'),
                 master=self
             )
             return

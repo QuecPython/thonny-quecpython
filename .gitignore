@@ -1,3 +1,4 @@
 *.log
 dist
 thonny_quecpython.egg-info
+build/
