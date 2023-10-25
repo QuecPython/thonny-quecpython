@@ -26,7 +26,7 @@ WEBREPL_PORT_VALUE = "webrepl"
 VIDS_PIDS_TO_AVOID_IN_GENERIC_BACKEND = set()
 
 
-class MicroPythonProxy(SubprocessProxy):
+class QuecPythonProxy(SubprocessProxy):
     def __init__(self, clean):
         self._lib_dirs = []
         super().__init__(clean, running.get_front_interpreter_for_subprocess())
@@ -53,7 +53,7 @@ class MicroPythonProxy(SubprocessProxy):
         return self._lib_dirs
 
     def _store_state_info(self, msg):
-        super(MicroPythonProxy, self)._store_state_info(msg)
+        super(QuecPythonProxy, self)._store_state_info(msg)
         if "lib_dirs" in msg:
             self._lib_dirs = msg["lib_dirs"]
 
@@ -84,7 +84,7 @@ class MicroPythonProxy(SubprocessProxy):
         return True
 
 
-class BareMetalMicroPythonProxy(MicroPythonProxy):
+class BareMetalQuecPythonProxy(QuecPythonProxy):
     def __init__(self, clean):
         self._port = get_workbench().get_option(self.backend_name + ".port")
         self._clean_start = clean
@@ -96,9 +96,9 @@ class BareMetalMicroPythonProxy(MicroPythonProxy):
         return None
 
     def get_pip_gui_class(self):
-        from thonny.plugins.quecpython.backend.pip_gui import MicroPythonPipDialog
+        from thonny.plugins.quecpython.backend.pip_gui import QuecPythonPipDialog
 
-        return MicroPythonPipDialog
+        return QuecPythonPipDialog
 
     def destroy(self, for_restart: bool = False):
         super().destroy(for_restart=for_restart)
@@ -418,7 +418,7 @@ class BareMetalMicroPythonProxy(MicroPythonProxy):
         )
 
 
-class BareMetalMicroPythonConfigPage(BackendDetailsConfigPage):
+class BareMetalQuecPythonConfigPage(BackendDetailsConfigPage):
     backend_name = None  # Will be overwritten on Workbench.add_backend
 
     def __init__(self, master):
@@ -664,7 +664,7 @@ class BareMetalMicroPythonConfigPage(BackendDetailsConfigPage):
         return False
 
 
-class GenericBareMetalMicroPythonProxy(BareMetalMicroPythonProxy):
+class GenericBareMetalQuecPythonProxy(BareMetalQuecPythonProxy):
     @classmethod
     def get_known_usb_vids_pids(cls):
         """Return set of pairs of USB device (VID, PID)"""
@@ -680,13 +680,13 @@ class GenericBareMetalMicroPythonProxy(BareMetalMicroPythonProxy):
         return VIDS_PIDS_TO_AVOID_IN_GENERIC_BACKEND
 
 
-class GenericBareMetalMicroPythonConfigPage(BareMetalMicroPythonConfigPage):
+class GenericBareMetalQuecPythonConfigPage(BareMetalQuecPythonConfigPage):
     @property
     def allow_webrepl(self):
         return False
 
 
-class LocalMicroPythonProxy(MicroPythonProxy):
+class LocalQuecPythonProxy(QuecPythonProxy):
     def __init__(self, clean):
         exe = get_workbench().get_option("LocalMicroPython.executable")
         if os.path.isabs(exe):
@@ -799,7 +799,7 @@ class LocalMicroPythonProxy(MicroPythonProxy):
         return os.path.exists(executable) or shutil.which(executable)
 
 
-class LocalMicroPythonConfigPage(BackendDetailsConfigPage):
+class LocalQuecPythonConfigPage(BackendDetailsConfigPage):
     backend_name = None  # Will be overwritten on Workbench.add_backend
 
     def __init__(self, master):
@@ -820,7 +820,7 @@ class LocalMicroPythonConfigPage(BackendDetailsConfigPage):
         return self._changed
 
 
-class SshMicroPythonProxy(MicroPythonProxy):
+class SshQuecPythonProxy(QuecPythonProxy):
     def __init__(self, clean):
         self._host = get_workbench().get_option(f"{self.backend_name}.host")
         self._user = get_workbench().get_option(f"{self.backend_name}.user")
@@ -959,7 +959,7 @@ class SshMicroPythonProxy(MicroPythonProxy):
         return True
 
 
-class SshMicroPythonConfigPage(BaseSshProxyConfigPage):
+class SshQuecPythonConfigPage(BaseSshProxyConfigPage):
     pass
 
 

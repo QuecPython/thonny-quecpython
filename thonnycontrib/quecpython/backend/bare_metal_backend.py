@@ -26,7 +26,7 @@ from thonny.common import (
     serialize_message,
 )
 from thonny.misc_utils import find_volumes_by_name
-from thonny.plugins.quecpython.backend.connection import MicroPythonConnection
+from thonny.plugins.quecpython.backend.connection import QuecPythonConnection
 from thonny.plugins.quecpython.backend.mp_back import (
     EOT,
     NORMAL_MODE_CMD,
@@ -37,7 +37,7 @@ from thonny.plugins.quecpython.backend.mp_back import (
     WAIT_OR_CRASH_TIMEOUT,
     Y2000_EPOCH_OFFSET,
     ManagementError,
-    MicroPythonBackend,
+    QuecPythonBackend,
     ProtocolError,
     ReadOnlyFilesystemError,
     ends_overlap,
@@ -125,7 +125,7 @@ FALLBACK_BUILTIN_MODULES = [
 logger = getLogger("thonny.plugins.quecpython.backend.bare_metal_backend")
 
 
-class BareMetalMicroPythonBackend(MicroPythonBackend, UploadDownloadMixin):
+class BareMetalQuecPythonBackend(QuecPythonBackend, UploadDownloadMixin):
     def __init__(self, connection, clean, args):
         self._connection = connection
         self._startup_time = time.time()
@@ -163,9 +163,9 @@ class BareMetalMicroPythonBackend(MicroPythonBackend, UploadDownloadMixin):
 
         self._last_prompt = None
 
-        MicroPythonBackend.__init__(self, clean, args)
+        QuecPythonBackend.__init__(self, clean, args)
 
-    def get_connection(self) -> MicroPythonConnection:
+    def get_connection(self) -> QuecPythonConnection:
         return self._connection
 
     def _check_prepare(self):
@@ -1709,7 +1709,7 @@ class BareMetalMicroPythonBackend(MicroPythonBackend, UploadDownloadMixin):
         )
 
 
-class GenericBareMetalMicroPythonBackend(BareMetalMicroPythonBackend):
+class GenericBareMetalMicroPythonBackend(BareMetalQuecPythonBackend):
     def _get_sys_path_for_analysis(self) -> Optional[List[str]]:
         return [
             os.path.join(os.path.dirname(__file__), "generic_api_stubs"),
@@ -1720,7 +1720,7 @@ class RawPasteNotSupportedError(RuntimeError):
     pass
 
 
-def launch_bare_metal_backend(backend_class: Callable[..., BareMetalMicroPythonBackend]) -> None:
+def launch_bare_metal_backend(backend_class: Callable[..., BareMetalQuecPythonBackend]) -> None:
     thonny.configure_backend_logging()
     print(PROCESS_ACK)
 

@@ -20,14 +20,14 @@ from thonny import report_time
 from thonny.backend import SshMixin
 from thonny.common import PROCESS_ACK, BackendEvent, serialize_message
 from thonny.plugins.quecpython.backend.bare_metal_backend import LF, NORMAL_PROMPT
-from thonny.plugins.quecpython.backend.connection import MicroPythonConnection
+from thonny.plugins.quecpython.backend.connection import QuecPythonConnection
 from thonny.plugins.quecpython.backend.mp_back import (
     ENCODING,
     EOT,
     PASTE_MODE_CMD,
     PASTE_MODE_LINE_PREFIX,
     ManagementError,
-    MicroPythonBackend,
+    QuecPythonBackend,
     ends_overlap,
 )
 from thonny.plugins.quecpython.backend.mp_common import PASTE_SUBMIT_MODE
@@ -65,7 +65,7 @@ FALLBACK_BUILTIN_MODULES = [
 ]
 
 
-class UnixMicroPythonBackend(MicroPythonBackend, ABC):
+class UnixQuecPythonBackend(QuecPythonBackend, ABC):
     def __init__(self, args):
         try:
             self._interpreter = self._resolve_executable(args["interpreter"])
@@ -77,9 +77,9 @@ class UnixMicroPythonBackend(MicroPythonBackend, ABC):
             sys.stdout.flush()
             sys.exit(1)
 
-        MicroPythonBackend.__init__(self, None, args)
+        QuecPythonBackend.__init__(self, None, args)
 
-    def get_connection(self) -> MicroPythonConnection:
+    def get_connection(self) -> QuecPythonConnection:
         return self._connection
 
     def _resolve_executable(self, executable):
@@ -315,7 +315,7 @@ class UnixMicroPythonBackend(MicroPythonBackend, ABC):
         return source_bytes
 
 
-class LocalUnixMicroPythonBackend(UnixMicroPythonBackend):
+class LocalUnixMicroPythonBackend(UnixQuecPythonBackend):
     def _create_connection(self, run_args=[]):
         from thonny.plugins.quecpython.backend.subprocess_connection import SubprocessConnection
 

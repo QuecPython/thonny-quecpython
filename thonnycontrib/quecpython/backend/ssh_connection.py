@@ -1,9 +1,9 @@
 import shlex
 
-from .connection import MicroPythonConnection
+from .connection import QuecPythonConnection
 
 
-class SshProcessConnection(MicroPythonConnection):
+class SshProcessConnection(QuecPythonConnection):
     def __init__(self, client, cwd, cmd):
         super().__init__()
         import threading

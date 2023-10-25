@@ -1,8 +1,8 @@
 from thonny import get_workbench
 from thonny.plugins.quecpython.backend.mp_front import (
     add_quecpython_backend,
-    GenericBareMetalMicroPythonConfigPage,
-    GenericBareMetalMicroPythonProxy
+    GenericBareMetalQuecPythonConfigPage,
+    GenericBareMetalQuecPythonProxy
 )
 
 
@@ -21,9 +21,9 @@ def create_view():
 def load_plugin():
     add_quecpython_backend(
         "GenericQuecPython",
-        GenericBareMetalMicroPythonProxy,
+        GenericBareMetalQuecPythonProxy,
         "QuecPython (generic)",
-        GenericBareMetalMicroPythonConfigPage,
+        GenericBareMetalQuecPythonConfigPage,
         sort_key="51",
     )
     create_view()

@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional
 
 from thonny.languages import tr
 from thonny.misc_utils import levenshtein_distance
-from thonny.plugins.quecpython.backend import LocalMicroPythonProxy, MicroPythonProxy
+from thonny.plugins.quecpython.backend import LocalQuecPythonProxy, QuecPythonProxy
 from thonny.plugins.pip_gui import BackendPipDialog, get_not_supported_translation
 
 MICROPYTHON_ORG_JSON = "https://micropython.org/pi/v2/index.json"
@@ -17,7 +17,7 @@ class MicroPythonPipDialog(BackendPipDialog):
     def __init__(self, master):
         self._mp_org_index_data = None
         super().__init__(master)
-        assert isinstance(self._backend_proxy, MicroPythonProxy)
+        assert isinstance(self._backend_proxy, QuecPythonProxy)
 
     def _confirm_install(self, package_data: Dict) -> bool:
         if not self._looks_like_micropython_package(package_data):
@@ -118,7 +118,7 @@ class MicroPythonPipDialog(BackendPipDialog):
     def _show_instructions_about_target(self):
         self._append_info_text(tr("Target") + "\n", ("caption",))
 
-        if isinstance(self._backend_proxy, LocalMicroPythonProxy):
+        if isinstance(self._backend_proxy, LocalQuecPythonProxy):
             dir_tags = ("url",)
         else:
             dir_tags = ()

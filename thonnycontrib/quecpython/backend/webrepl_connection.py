@@ -3,12 +3,12 @@ import threading
 from logging import DEBUG, getLogger
 from queue import Queue
 
-from .connection import MicroPythonConnection
+from .connection import QuecPythonConnection
 
 logger = getLogger(__name__)
 
 
-class WebReplConnection(MicroPythonConnection):
+class WebReplConnection(QuecPythonConnection):
     """
     Problem with block size:
     https://github.com/micropython/micropython/issues/2497

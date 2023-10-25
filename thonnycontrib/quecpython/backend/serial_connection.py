@@ -5,7 +5,7 @@ import time
 from logging import getLogger
 from textwrap import dedent
 
-from .connection import MicroPythonConnection
+from .connection import QuecPythonConnection
 
 OUTPUT_ENQ = b"\x05"
 OUTPUT_ACK = b"\x06"
@@ -17,7 +17,7 @@ FIRST_RAW_PROMPT = b"raw REPL; CTRL-B to exit\r\n>"
 logger = getLogger(__name__)
 
 
-class SerialConnection(MicroPythonConnection):
+class SerialConnection(QuecPythonConnection):
     def __init__(self, port, baudrate=115200, dtr=None, rts=None, skip_reader=False):
         import serial
         from serial.serialutil import SerialException

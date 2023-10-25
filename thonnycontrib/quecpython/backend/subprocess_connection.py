@@ -1,10 +1,10 @@
 import signal
 import sys
 
-from thonny.plugins.quecpython.backend.connection import MicroPythonConnection
+from thonny.plugins.quecpython.backend.connection import QuecPythonConnection
 
 
-class SubprocessConnection(MicroPythonConnection):
+class SubprocessConnection(QuecPythonConnection):
     def __init__(self, executable, args=[]):
         import threading
 

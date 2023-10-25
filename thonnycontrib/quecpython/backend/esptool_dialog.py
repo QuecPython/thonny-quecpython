@@ -12,7 +12,7 @@ from typing import Any, Dict, Optional, Tuple
 from thonny import get_runner, get_workbench, ui_utils
 from thonny.common import normpath_with_actual_case
 from thonny.misc_utils import get_menu_char, running_on_windows
-from thonny.plugins.quecpython.backend import BareMetalMicroPythonProxy, list_serial_ports
+from thonny.plugins.quecpython.backend import BareMetalQuecPythonProxy, list_serial_ports
 from thonny.plugins.quecpython.backend.base_flashing_dialog import (
     BaseFlashingDialog,
     TargetInfo,
@@ -232,7 +232,7 @@ class ESPFlashingDialog(BaseFlashingDialog):
         target = self._target_combo.get_selected_value()
         proxy = get_runner().get_backend_proxy()
         port_was_used_in_thonny = (
-            isinstance(proxy, BareMetalMicroPythonProxy) and proxy._port == target.port.device
+            isinstance(proxy, BareMetalQuecPythonProxy) and proxy._port == target.port.device
         )
         if port_was_used_in_thonny and self._work_needs_disconnect():
             logger.info("Disconnecting")

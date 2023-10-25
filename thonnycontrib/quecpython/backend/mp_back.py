@@ -75,7 +75,7 @@ from thonny.common import (
     parse_message,
     serialize_message,
 )
-from thonny.plugins.quecpython.backend.connection import MicroPythonConnection
+from thonny.plugins.quecpython.backend.connection import QuecPythonConnection
 
 ENCODING = "utf-8"
 
@@ -112,15 +112,15 @@ PASTE_MODE_LINE_PREFIX = b"=== "
 logger = getLogger(__name__)
 
 
-class MicroPythonBackend(MainBackend, ABC):
+class QuecPythonBackend(MainBackend, ABC):
     def __init__(self, clean, args):
         # Make pipkin available
         sys.path.insert(
             0,
             os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "vendored_libs")),
         )
-        logger.info("Initializing MicroPythonBackend of type %s", type(self).__name__)
-        self._connection: MicroPythonConnection
+        logger.info("Initializing QuecPythonBackend of type %s", type(self).__name__)
+        self._connection: QuecPythonConnection
         self._args = args
         self._last_interrupt_time = None
         self._local_cwd = None
@@ -160,7 +160,7 @@ class MicroPythonBackend(MainBackend, ABC):
         except ConnectionError as e:
             self.handle_connection_error(e)
         except Exception:
-            logger.exception("Exception in MicroPython main method")
+            logger.exception("Exception in QuecPython main method")
             self._report_internal_exception("Internal error")
 
     def _prepare_after_soft_reboot(self, clean=False):
@@ -277,7 +277,7 @@ class MicroPythonBackend(MainBackend, ABC):
             + "\n"
         ).lstrip()
 
-    def get_connection(self) -> MicroPythonConnection:
+    def get_connection(self) -> QuecPythonConnection:
         raise NotImplementedError()
 
     def _sync_time(self):

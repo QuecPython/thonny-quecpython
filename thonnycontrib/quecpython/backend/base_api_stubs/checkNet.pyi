@@ -17,3 +17,4 @@ def waitNetworkReady(timeout: int = 60) -> tuple:
     2表示网络注册状态，范围0-11，每个状态值的详细说明，请参考net.getState()方法的返回值说明；
     3表示PDP Context激活状态，0表示没有激活成功，1表示激活成功。
     """
+    ...

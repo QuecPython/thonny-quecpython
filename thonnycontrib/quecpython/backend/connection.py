@@ -8,7 +8,7 @@ from typing import Optional, Union
 logger = getLogger(__name__)
 
 
-class MicroPythonConnection:
+class QuecPythonConnection:
     """Utility class for using Serial or WebSocket connection
 
     Uses background thread to read from the source as soon as possible
