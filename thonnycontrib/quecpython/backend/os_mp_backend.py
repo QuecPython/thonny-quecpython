@@ -33,7 +33,7 @@ from thonny.plugins.quecpython.backend.mp_back import (
 from thonny.plugins.quecpython.backend.mp_common import PASTE_SUBMIT_MODE
 
 # Can't use __name__, because it will be "__main__"
-logger = getLogger("thonny.plugins.micropython.os_mp_backend")
+logger = getLogger("thonny.plugins.quecpython.backend.os_mp_backend")
 
 
 FALLBACK_BUILTIN_MODULES = [

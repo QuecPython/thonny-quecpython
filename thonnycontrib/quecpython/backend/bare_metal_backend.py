@@ -9,7 +9,7 @@ from textwrap import dedent, indent
 from typing import BinaryIO, Callable, List, Optional, Union
 
 # make sure thonny folder is in sys.path (relevant in dev)
-thonny_container = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+thonny_container = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
 if thonny_container not in sys.path:
     sys.path.insert(0, thonny_container)
 
@@ -122,7 +122,7 @@ FALLBACK_BUILTIN_MODULES = [
 ]
 
 # Can't use __name__, because it will be "__main__"
-logger = getLogger("thonny.plugins.micropython.bare_metal_backend")
+logger = getLogger("thonny.plugins.quecpython.backend.bare_metal_backend")
 
 
 class BareMetalMicroPythonBackend(MicroPythonBackend, UploadDownloadMixin):

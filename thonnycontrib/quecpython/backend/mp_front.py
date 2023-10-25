@@ -170,9 +170,9 @@ class BareMetalMicroPythonProxy(MicroPythonProxy):
         return False
 
     def _get_backend_launcher_path(self) -> str:
-        import thonny.plugins.micropython.bare_metal_backend
+        import thonny.plugins.quecpython.backend.bare_metal_backend
 
-        return thonny.plugins.micropython.bare_metal_backend.__file__
+        return thonny.plugins.quecpython.backend.bare_metal_backend.__file__
 
     def _get_write_block_size(self):
         return get_workbench().get_option(self.backend_name + ".write_block_size")
@@ -394,7 +394,7 @@ class BareMetalMicroPythonProxy(MicroPythonProxy):
                 running.get_front_interpreter_for_subprocess(sys.executable),
                 "-m",
                 # "serial.tools.miniterm",
-                "thonny.plugins.micropython.miniterm_wrapper",
+                "thonny.plugins.quecpython.backend.miniterm_wrapper",
                 "--exit-char",
                 "20",
                 "--menu-char",
@@ -700,10 +700,10 @@ class LocalMicroPythonProxy(MicroPythonProxy):
         return self._target_executable
 
     def _get_launcher_with_args(self):
-        import thonny.plugins.micropython.os_mp_backend
+        import thonny.plugins.quecpython.backend.os_mp_backend
 
         cmd = [
-            thonny.plugins.micropython.os_mp_backend.__file__,
+            thonny.plugins.quecpython.backend.os_mp_backend.__file__,
             repr(
                 {
                     "interpreter": self._target_executable,
@@ -829,7 +829,7 @@ class SshMicroPythonProxy(MicroPythonProxy):
         super().__init__(clean)
 
     def _get_launcher_with_args(self):
-        import thonny.plugins.micropython.os_mp_backend
+        import thonny.plugins.quecpython.backend.os_mp_backend
 
         args = {
             "cwd": get_workbench().get_option(f"{self.backend_name}.cwd") or "",
@@ -842,7 +842,7 @@ class SshMicroPythonProxy(MicroPythonProxy):
         args.update(self._get_extra_launcher_args())
 
         cmd = [
-            thonny.plugins.micropython.os_mp_backend.__file__,
+            thonny.plugins.quecpython.backend.os_mp_backend.__file__,
             repr(args),
         ]
         return cmd
@@ -1070,7 +1070,7 @@ def get_port_info(port):
     raise RuntimeError("Port %s not found" % port)
 
 
-def add_micropython_backend(
+def add_quecpython_backend(
     name,
     proxy_class,
     description,

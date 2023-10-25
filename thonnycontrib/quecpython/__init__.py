@@ -1,22 +1,14 @@
 from thonny import get_workbench
 from thonny.plugins.quecpython.backend.mp_front import (
-    add_micropython_backend,
+    add_quecpython_backend,
     GenericBareMetalMicroPythonConfigPage,
-    GenericBareMetalMicroPythonProxy,
+    GenericBareMetalMicroPythonProxy
 )
-from .view import QuecView, open_quecview
-from .locale import tr
 
 
-def load_plugin():
-    add_micropython_backend(
-        "GenericQuecPython",
-        GenericBareMetalMicroPythonProxy,
-        "QuecPython (generic)",
-        GenericBareMetalMicroPythonConfigPage,
-        sort_key="51",
-    )
-
+def create_view():
+    from .view import QuecView, open_quecview
+    from .locale import tr
     get_workbench().add_view(QuecView, tr("QuecPython Kits"), "s")
     get_workbench().add_command(
         'quecpython_kits',
@@ -24,3 +16,14 @@ def load_plugin():
         tr('QuecPython Kits'),
         open_quecview
     )
+
+
+def load_plugin():
+    add_quecpython_backend(
+        "GenericQuecPython",
+        GenericBareMetalMicroPythonProxy,
+        "QuecPython (generic)",
+        GenericBareMetalMicroPythonConfigPage,
+        sort_key="51",
+    )
+    create_view()
