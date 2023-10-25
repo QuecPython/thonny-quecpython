@@ -1,5 +1,5 @@
 from thonny import get_workbench
-from thonny.plugins.micropython.mp_front import (
+from thonny.plugins.quecpython.backend.mp_front import (
     add_micropython_backend,
     GenericBareMetalMicroPythonConfigPage,
     GenericBareMetalMicroPythonProxy,
