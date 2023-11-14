@@ -13,7 +13,7 @@ MICROPYTHON_ORG_JSON = "https://micropython.org/pi/v2/index.json"
 logger = getLogger(__name__)
 
 
-class MicroPythonPipDialog(BackendPipDialog):
+class QuecPythonPipDialog(BackendPipDialog):
     def __init__(self, master):
         self._mp_org_index_data = None
         super().__init__(master)

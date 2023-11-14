@@ -1,232 +1,192 @@
 """
-mathematical functions.
+Function:
+Math module provides mathematical operation functions, and realizes subsets of the corresponding CPython module.
+See CPython file math for more detailed information: https://docs.python.org/3.5/library/math.html#module-math
 
 Descriptions taken from:
-https://raw.githubusercontent.com/micropython/micropython/master/docs/library/math.rst.
-=====================================
-
-.. module:: math
-   :synopsis: mathematical functions
-
-|see_cpython_module| :mod:`python:math`.
-
-The ``math`` module provides some basic mathematical functions for
-working with floating-point numbers.
-
-*Note:* On the pyboard, floating-point numbers have 32-bit precision.
-
-Availability: not available on WiPy. Floating point support required
-for this module.
+https://python.quectel.com/doc/API_reference/zh/stdlib/math.html
 """
 
-__author__ = "Howard C Lovatt"
-__copyright__ = "Howard C Lovatt, 2020 onwards."
-__license__ = "MIT https://opensource.org/licenses/MIT (as used by MicroPython)."
-__version__ = "7.3.9"  # Version set by https://github.com/hlovatt/tag2ver
+def pow(x, y):
+    """Returns x to the yth power.
 
-from typing import SupportsFloat, Final
-
-def acos(x: SupportsFloat, /) -> float:
+    :param x: Any type of real numbers.
+    :param y: Any type of real numbers.
+    :return: Floating point. x to the yth power.
     """
-   Return the inverse cosine of ``x``.
-   """
 
-def acosh(x: SupportsFloat, /) -> float:
+def acos(x):
+    """Returns the arccosine radian value of x.
+
+    :param x: Any type of real numbers that range from -1 to 1, including -1 and 1. If it is smaller than -1 or larger than 1, the error will be generated.
+    :return: Floating point. The arccosine radian value of x.
     """
-   Return the inverse hyperbolic cosine of ``x``.
-   """
 
-def asin(x: SupportsFloat, /) -> float:
+def asin(x):
+    """Returns the arcsine radian value of x.
+
+    :param x: Any type of real numbers that range from -1 to 1, including -1 and 1. If it is less than -1 or greater than 1, the error will be generated.
+    :return: Floating point. The arcsine radian value of x.
     """
-   Return the inverse sine of ``x``.
-   """
 
-def asinh(x: SupportsFloat, /) -> float:
+def atan(x):
+    """Returns the arctangent radian value of x.
+
+    :x: Any type of real numbers.
+    :return: Floating point. The arctangent radian value of x.
     """
-   Return the inverse hyperbolic sine of ``x``.
-   """
 
-def atan(x: SupportsFloat, /) -> float:
+def atan2(x, y):
+    """Returns the arctangent value of the given X and Y coordinate values.
+
+    :param x: Any type of real numbers.
+    :param y:Any type of real numbers.
+    :return: Floating point. The arctangent value of the coordinate (x ,y).
     """
-   Return the inverse tangent of ``x``.
-   """
 
-def atan2(y: SupportsFloat, x: SupportsFloat, /) -> float:
+def ceil(x):
+    """Returns the integer of a number obtained by rounding up.
+
+    :param x: Any type of real numbers.
+    :return: Integer type. x: The minimum integer which is greater than or equal to the input parameter.
     """
-   Return the principal value of the inverse tangent of ``y/x``.
-   """
 
-def atanh(x: SupportsFloat, /) -> float:
+def copysign(x, y):
+    """Puts the plus or minus symbol of y in front of x.
+
+    :param x: Any type of real numbers.
+    :param y: Any type of real numbers.
+    :return: Floating point. The value after putting the plus or minus symbol of y in front of x.
     """
-   Return the inverse hyperbolic tangent of ``x``.
-   """
 
-def ceil(x: SupportsFloat, /) -> int:
+def cos(x):
+    """Returns the cosine value of the x radian.
+
+    :param x: Any type of real numbers.
+    :return: Floating point. The cosine value of the x radian which ranges from -1 to 1.
     """
-   Return an integer, being ``x`` rounded towards positive infinity.
-   """
 
-def copysign(x: SupportsFloat, y: SupportsFloat, /) -> float:
+def degrees(x):
+    """Converts the radian to the angle.
+
+    :param x: Any type of real numbers.
+    :return: Floating point. The angle which is converted by radian x.
     """
-   Return ``x`` with the sign of ``y``.
-   """
 
-def cos(x: SupportsFloat, /) -> float:
+e: float = ...  # The mathematical constant e is a natural constant.
+
+def exp(x):
+    """Returns e to the xth power.
+
+    :param x: Any type of real numbers.
+    :return: Return Value Floating point. e to the xth power.
     """
-   Return the cosine of ``x``.
-   """
 
-def cosh(x: SupportsFloat, /) -> float:
+def fabs(x):
+    """Returns the absolute value of a number.
+
+    :param x: Any type of real numbers.
+    :return: Floating point. The absolute value of x.
     """
-   Return the hyperbolic cosine of ``x``.
-   """
 
-def degrees(x: SupportsFloat, /) -> float:
+def floor(x):
+    """Returns the integer of a number obtained by rounding down.
+
+    :param x: Any type of real numbers.
+    :return: Integer type. x: The maximum integer which is less than or equal to the input parameter.
     """
-   Return radians ``x`` converted to degrees.
-   """
 
-def erf(x: SupportsFloat, /) -> float:
+def fmod(x, y):
+    """Returns the remainder of x/y.
+
+    :param x: Any type of real numbers.
+    :param y: Any type of real numbers.
+    :return: Floating point. The remainder of x/y.
     """
-   Return the error function of ``x``.
-   """
 
-def erfc(x: SupportsFloat, /) -> float:
+def modf(x):
+    """Returns a tuple consisting of the decimal and integer parts of x.
+
+    :param x: Any type of real numbers.
+    :return: Floating point. The remainder of x/y.
     """
-   Return the complementary error function of ``x``.
-   """
 
-def exp(x: SupportsFloat, /) -> float:
+def frexp(x):
+    """Returns a tuple (m,e).
+
+    :param x: Floating point.
+    :return:Returns a tuple (m,e) , and returns the mantissa and exponent of x in the form of (m,e) .
+    m is a floating point, e is an integer, and x == m * 2**e. If x is 0, (0.0, 0) will be returned, otherwise 0.5 <= abs(m) < 1 will be returned.
     """
-   Return the exponential of ``x``.
-   """
 
-def expm1(x: SupportsFloat, /) -> float:
+def isfinite(x):
+    """Determines whether x is a finite number.
+
+    :param x: Any type of real numbers.
+    :return: Determines whether x is a finite number. If x is a finite number, True will be returned, otherwise False will be returned.
     """
-   Return ``exp(x) - 1``.
-   """
 
-def fabs(x: SupportsFloat, /) -> float:
+def isinf(x):
+    """Determines whether x is an infinity number or a minus infinity number.
+
+    :param x: Any type of real numbers.
+    :return: If x is an infinity number or a minus infinity number, True will be returned, otherwise False will be returned.
     """
-   Return the absolute value of ``x``.
-   """
 
-def floor(x: SupportsFloat, /) -> int:
+def isnan(x):
+    """Determines whether x is not a number (NaN).
+
+    :param x: Any type of real numbers.
+    :return: If x is not a number, True will be returned, otherwise False will be returned.
     """
-   Return an integer, being ``x`` rounded towards negative infinity.
-   """
 
-def fmod(x: SupportsFloat, y: SupportsFloat, /) -> float:
+def ldexp(x, exp):
+    """Returns the value of x*(2^i)
+
+    :param x: Any type of real numbers.
+    :return: Floating point. The value of x(2*i).
     """
-   Return the remainder of ``x/y``.
-   """
 
-def frexp(x: SupportsFloat, /) -> tuple[float, int]:
+def log(x):
+    """Returns the natural logarithm of x.
+
+    :param x: Any type of real numbers. If it is less than 0, the error will be reported.
+    :return: Floating point. The natural logarithm of x.
     """
-   Decomposes a floating-point number into its mantissa and exponent.
-   The returned value is the tuple ``(m, e)`` such that ``x == m * 2**e``
-   exactly.  If ``x == 0`` then the function returns ``(0.0, 0)``, otherwise
-   the relation ``0.5 <= abs(m) < 1`` holds.
-   """
 
-def gamma(x: SupportsFloat, /) -> float:
+pi: float = ...  # Mathematical constant pi (Pi, which is generally expressed as π).
+
+def radians(x):
+    """Converts the angle to the radian.
+
+    :param x: Any type of real numbers.
+    :return: Floating point. The radian which is converted by the angle x.
     """
-   Return the gamma function of ``x``.
-   """
 
-def isfinite(x: SupportsFloat, /) -> bool:
+def sin(x):
+    """Returns the sine value of x radian.
+
+    :param x: Any type of real numbers.
+    :return: Returns the sine value of x radian which ranges from -1 to 1.
     """
-   Return ``True`` if ``x`` is finite.
-   """
 
-def isinf(x: SupportsFloat, /) -> bool:
+def sqrt(x):
+    """Returns the square root of x.
+
+    :param x: Any type of real numbers.
+    :return: Floating point. The square root of x.
     """
-   Return ``True`` if ``x`` is infinite.
-   """
 
-def isnan(x: SupportsFloat, /) -> bool:
+def tan(x):
+    """Returns the tangent value of x radian.
+
+    :param x: Any type of real numbers.
+    :return: Floating point. The tangent value of x radian which ranges from -1 to 1.
     """
-   Return ``True`` if ``x`` is not-a-number
-   """
 
-# noinspection PyShadowingNames
-def ldexp(x: SupportsFloat, exp: int, /) -> float:
+def trunc(x):
+    """Returns the integer part of x.
+
+    :param x: Any type of real numbers.
+    :return: Integer type. The integer part of x.
     """
-   Return ``x * (2**exp)``.
-   """
-
-def lgamma(x: SupportsFloat, /) -> float:
-    """
-   Return the natural logarithm of the gamma function of ``x``.
-   """
-
-def log(x: SupportsFloat, /) -> float:
-    """
-   Return the natural logarithm of ``x``.
-   """
-
-def log10(x: SupportsFloat, /) -> float:
-    """
-   Return the base-10 logarithm of ``x``.
-   """
-
-def log2(x: SupportsFloat, /) -> float:
-    """
-   Return the base-2 logarithm of ``x``.
-   """
-
-def modf(x: SupportsFloat, /) -> tuple[float, float]:
-    """
-   Return a tuple of two floats, being the fractional and integral parts of
-   ``x``.  Both return values have the same sign as ``x``.
-   """
-
-def pow(x: SupportsFloat, y: SupportsFloat, /) -> float:
-    """
-   Returns ``x`` to the power of ``y``.
-   """
-
-def radians(x: SupportsFloat, /) -> float:
-    """
-   Return degrees ``x`` converted to radians.
-   """
-
-def sin(x: SupportsFloat, /) -> float:
-    """
-   Return the sine of ``x``.
-   """
-
-def sinh(x: SupportsFloat, /) -> float:
-    """
-   Return the hyperbolic sine of ``x``.
-   """
-
-def sqrt(x: SupportsFloat, /) -> float:
-    """
-   Return the square root of ``x``.
-   """
-
-def tan(x: SupportsFloat, /) -> float:
-    """
-   Return the tangent of ``x``.
-   """
-
-def tanh(x: SupportsFloat, /) -> float:
-    """
-   Return the hyperbolic tangent of ``x``.
-   """
-
-def trunc(x: SupportsFloat, /) -> float:
-    """
-   Return an integer, being ``x`` rounded towards 0.
-   """
-
-e: Final[float] = ...
-"""
-base of the natural logarithm
-"""
-
-pi: Final[float] = ...
-"""
-the ratio of a circle's circumference to its diameter
-"""

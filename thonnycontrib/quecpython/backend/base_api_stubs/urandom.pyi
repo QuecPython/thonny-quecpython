@@ -1,122 +1,59 @@
 """
-random numbers.
+Function:
+urandom module provides the tool for random number generation.
 
 Descriptions taken from:
-https://raw.githubusercontent.com/micropython/micropython/master/docs/library/random.rst.
-========================================
-
-.. module:: random
-   :synopsis: random numbers
-
-This module implements a pseudo-random number generator (PRNG).
-
-|see_cpython_module| :mod:`python:random` .
-
-.. note::
-
-   The following notation is used for intervals:
-
-   - () are open interval brackets and do not include their endpoints.
-     For example, (0, 1) means greater than 0 and less than 1.
-     In set notation: (0, 1) = {x | 0 < x < 1}.
-
-   - [] are closed interval brackets which include all their limit points.
-     For example, [0, 1] means greater than or equal to 0 and less than
-     or equal to 1.
-     In set notation: [0, 1] = {x | 0 <= x <= 1}.
-
-.. note::
-
-   The :func:`randrange`, :func:`randint` and :func:`choice` functions are only
-   available if the ``MICROPY_PY_URANDOM_EXTRA_FUNCS`` configuration option is
-   enabled.
+https://python.quectel.com/doc/API_reference/zh/stdlib/urandom.html
 """
 
-__author__ = "Howard C Lovatt"
-__copyright__ = "Howard C Lovatt, 2020 onwards."
-__license__ = "MIT https://opensource.org/licenses/MIT (as used by MicroPython)."
-__version__ = "7.3.9"  # Version set by https://github.com/hlovatt/tag2ver
 
-from typing import TypeVar, runtime_checkable, Protocol, overload
+def choice(obj: str) -> str:
+    """Generates elements in object obj randomly. The type of obj is string.
 
-_T = TypeVar("_T")
-@runtime_checkable
-class Subscriptable(Protocol[_T]):
-    """A `Protocol` (structurally typed) for an object that is subscriptable and of finite length."""
-
-    __slots__ = ()
-    def __len__(self) -> int:
-        """Number of elements, normally called via `len(x)` where `x` is an object that implements this protocol."""
-    def __getitem__(self, index: int) -> _T:
-        """
-        Element at the given index, 
-        normally called via `x[index]` where `x` is an object that implements this protocol.
-        """
-
-def getrandbits(n: int, /) -> int:
+    :param obj: String type.
+    :return: String type. Some random element in obj.
     """
-    Return an integer with *n* random bits (0 <= n <= 32).
-   """
 
-def randint(a: int, b: int, /) -> int:
-    """
-    Return a random integer in the range [*a*, *b*].
-   """
+def getrandbits(k: int) -> int:
+    """Generates a decimal number in the range of k bits randomly.
 
-@overload
-def randrange(stop: int, /) -> int:
+    :param: Integer type. Indicates the range.(Unit: bit)
+    :return: Integer type. A random decimal number in the range of k bits.
     """
-    The first form returns a random integer from the range [0, *stop*).
-    The second form returns a random integer from the range [*start*, *stop*).
-    The third form returns a random integer from the range [*start*, *stop*) in
-    steps of *step*.  For instance, calling ``randrange(1, 10, 2)`` will
-    return odd numbers between 1 and 9 inclusive.
-   """
 
-@overload
-def randrange(start: int, stop: int, /) -> int:
-    """
-    The first form returns a random integer from the range [0, *stop*).
-    The second form returns a random integer from the range [*start*, *stop*).
-    The third form returns a random integer from the range [*start*, *stop*) in
-    steps of *step*.  For instance, calling ``randrange(1, 10, 2)`` will
-    return odd numbers between 1 and 9 inclusive.
-   """
+def randint(start: int, end: int) -> int:
+    """Generates an integer between start and end.
 
-@overload
-def randrange(start: int, stop: int, step: int, /) -> int:
+    :param start: Integer type. The minimum value in the interval.
+    :param end: Integer type. The maximum value in the interval.
+    :return: Integer type. A random integer between start and end.
     """
-    The first form returns a random integer from the range [0, *stop*).
-    The second form returns a random integer from the range [*start*, *stop*).
-    The third form returns a random integer from the range [*start*, *stop*) in
-    steps of *step*.  For instance, calling ``randrange(1, 10, 2)`` will
-    return odd numbers between 1 and 9 inclusive.
-   """
 
 def random() -> float:
-    """
-    Return a random floating point number in the range [0.0, 1.0).
-   """
+    """Generates a floating point between 0 and 1.
 
-def uniform(a: float, b: float) -> float:
+    :return: Floating point.The floating point between 0 and 1.
     """
-    Return a random floating point number N such that *a* <= N <= *b* for *a* <= *b*,
-    and *b* <= N <= *a* for *b* < *a*.
-   """
 
-def seed(n: int | None = None, /) -> None:
-    """
-    Initialise the random number generator module with the seed *n* which should
-    be an integer.  When no argument (or ``None``) is passed in it will (if
-    supported by the port) initialise the PRNG with a true random number
-    (usually a hardware generated random number).
-    
-    The ``None`` case only works if ``MICROPY_PY_URANDOM_SEED_INIT_FUNC`` is
-    enabled by the port, otherwise it raises ``ValueError``.
-   """
+def randrange(start, end, step) -> int:
+    """Generates a positive integer ascending to step and between start and end randomly.
 
-def choice(sequence: Subscriptable, /) -> None:
+    :param start: Integer type. The minimum value in the interval.
+    :param end: Integer type. The maximum value in the interval.
+    :param step: Integer type. The length of ascending.
+    :return: Integer type. A random integer between start and end.
     """
-    Chooses and returns one item at random from *sequence* (tuple, list or
-    any object that supports the subscript operation).
-   """
+
+def seed(sed:int):
+    """Specifies the seed of a random number, generally used in conjunction with other random number generation functions.
+
+    :param sed: Integer type.
+    """
+
+def uniform(start, end):
+    """Generating A Floating Point Between start And end Randomly
+
+    :param start: Any type of real numbers. The minimum value in the interval.
+    :param end: Any type of real numbers. The maximum value in the interval.
+    :return: Floating point. A random number between start and end.
+    """

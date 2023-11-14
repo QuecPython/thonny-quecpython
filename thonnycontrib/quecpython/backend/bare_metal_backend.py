@@ -1115,11 +1115,11 @@ class BareMetalQuecPythonBackend(QuecPythonBackend, UploadDownloadMixin):
 
     def _cmd_upload(self, cmd):
         self._check_sync_time()
-        return super(BareMetalMicroPythonBackend, self)._cmd_upload(cmd)
+        return super(BareMetalQuecPythonBackend, self)._cmd_upload(cmd)
 
     def _cmd_write_file(self, cmd):
         self._check_sync_time()
-        return super(BareMetalMicroPythonBackend, self)._cmd_write_file(cmd)
+        return super(BareMetalQuecPythonBackend, self)._cmd_write_file(cmd)
 
     def _cmd_prepare_disconnect(self, cmd):
         logger.info("Preparing disconnect")
@@ -1709,7 +1709,7 @@ class BareMetalQuecPythonBackend(QuecPythonBackend, UploadDownloadMixin):
         )
 
 
-class GenericBareMetalMicroPythonBackend(BareMetalQuecPythonBackend):
+class GenericBareMetalQuecPythonBackend(BareMetalQuecPythonBackend):
     def _get_sys_path_for_analysis(self) -> Optional[List[str]]:
         return [
             os.path.join(os.path.dirname(__file__), "generic_api_stubs"),
@@ -1758,4 +1758,4 @@ def launch_bare_metal_backend(backend_class: Callable[..., BareMetalQuecPythonBa
 
 
 if __name__ == "__main__":
-    launch_bare_metal_backend(GenericBareMetalMicroPythonBackend)
+    launch_bare_metal_backend(GenericBareMetalQuecPythonBackend)
