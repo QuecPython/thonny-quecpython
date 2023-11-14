@@ -1,5 +1,7 @@
 from setuptools import setup, find_packages
 
+VERSION = "0.1.9"
+
 
 def readme():
     with open('README.rst', encoding='utf-8') as f:
@@ -8,9 +10,7 @@ def readme():
 
 
 def get_version():
-    with open('VERSION', encoding='utf-8') as f:
-        version = f.read()
-    return version
+    return VERSION
 
 
 setup(
@@ -43,6 +43,10 @@ setup(
         "thonnycontrib.quecpython.locale": [
             "zh_CN.lag",
         ],
+        "thonnycontrib.quecpython.backend": [
+            "base_api_stubs/*",
+            "generic_api_stubs/*",
+        ]
     },
     install_requires=[
         'thonny>=4.1.1',

@@ -1,6 +1,6 @@
 import shlex
 
-from .connection import QuecPythonConnection
+from thonnycontrib.quecpython.backend.connection import QuecPythonConnection
 
 
 class SshProcessConnection(QuecPythonConnection):

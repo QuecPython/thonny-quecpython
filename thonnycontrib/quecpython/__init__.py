@@ -1,5 +1,5 @@
 from thonny import get_workbench
-from thonny.plugins.quecpython.backend.mp_front import (
+from .backend.mp_front import (
     add_quecpython_backend,
     GenericBareMetalQuecPythonConfigPage,
     GenericBareMetalQuecPythonProxy

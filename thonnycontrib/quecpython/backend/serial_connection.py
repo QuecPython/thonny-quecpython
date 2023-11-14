@@ -5,7 +5,7 @@ import time
 from logging import getLogger
 from textwrap import dedent
 
-from .connection import QuecPythonConnection
+from thonnycontrib.quecpython.backend.connection import QuecPythonConnection
 
 OUTPUT_ENQ = b"\x05"
 OUTPUT_ACK = b"\x06"

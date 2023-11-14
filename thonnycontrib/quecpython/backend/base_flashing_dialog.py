@@ -401,7 +401,6 @@ class BaseFlashingDialog(WorkDialog, ABC):
         return self._target_combo.get_selected_value() and self._version_combo.get_selected_value()
 
     def start_work(self):
-        from thonny.plugins.quecpython.backend import BareMetalQuecPythonProxy
 
         variant_info: Dict[str, Any] = self._variant_combo.get_selected_value()
         download_info: Dict[str, Any] = self._version_combo.get_selected_value()

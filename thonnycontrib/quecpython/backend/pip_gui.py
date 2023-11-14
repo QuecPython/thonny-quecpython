@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional
 
 from thonny.languages import tr
 from thonny.misc_utils import levenshtein_distance
-from thonny.plugins.quecpython.backend import LocalQuecPythonProxy, QuecPythonProxy
+from thonnycontrib.quecpython.backend.mp_front import LocalQuecPythonProxy, QuecPythonProxy
 from thonny.plugins.pip_gui import BackendPipDialog, get_not_supported_translation
 
 MICROPYTHON_ORG_JSON = "https://micropython.org/pi/v2/index.json"

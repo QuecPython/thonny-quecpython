@@ -6,12 +6,12 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 
 from thonny.common import UserError
 from thonny.misc_utils import get_win_volume_name, list_volumes
-from thonny.plugins.quecpython.backend.base_flashing_dialog import (
+from thonnycontrib.quecpython.backend.base_flashing_dialog import (
     BaseFlashingDialog,
     TargetInfo,
     family_code_to_name,
 )
-from thonny.plugins.quecpython.backend.mp_front import list_serial_ports
+from thonnycontrib.quecpython.backend.mp_front import list_serial_ports
 
 logger = getLogger(__name__)
 

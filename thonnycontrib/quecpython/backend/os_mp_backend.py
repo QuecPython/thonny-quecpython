@@ -19,9 +19,9 @@ import thonny
 from thonny import report_time
 from thonny.backend import SshMixin
 from thonny.common import PROCESS_ACK, BackendEvent, serialize_message
-from thonny.plugins.quecpython.backend.bare_metal_backend import LF, NORMAL_PROMPT
-from thonny.plugins.quecpython.backend.connection import QuecPythonConnection
-from thonny.plugins.quecpython.backend.mp_back import (
+from thonnycontrib.quecpython.backend.bare_metal_backend import LF, NORMAL_PROMPT
+from thonnycontrib.quecpython.backend.connection import QuecPythonConnection
+from thonnycontrib.quecpython.backend.mp_back import (
     ENCODING,
     EOT,
     PASTE_MODE_CMD,
@@ -30,10 +30,10 @@ from thonny.plugins.quecpython.backend.mp_back import (
     QuecPythonBackend,
     ends_overlap,
 )
-from thonny.plugins.quecpython.backend.mp_common import PASTE_SUBMIT_MODE
+from thonnycontrib.quecpython.backend.mp_common import PASTE_SUBMIT_MODE
 
 # Can't use __name__, because it will be "__main__"
-logger = getLogger("thonny.plugins.quecpython.backend.os_mp_backend")
+logger = getLogger("thonnycontrib.quecpython.backend.os_mp_backend")
 
 
 FALLBACK_BUILTIN_MODULES = [
@@ -317,7 +317,7 @@ class UnixQuecPythonBackend(QuecPythonBackend, ABC):
 
 class LocalUnixMicroPythonBackend(UnixQuecPythonBackend):
     def _create_connection(self, run_args=[]):
-        from thonny.plugins.quecpython.backend.subprocess_connection import SubprocessConnection
+        from thonnycontrib.quecpython.backend.subprocess_connection import SubprocessConnection
 
         return SubprocessConnection(self._interpreter, ["-i"] + run_args)
 
@@ -357,7 +357,7 @@ class SshUnixMicroPythonBackend(UnixMicroPythonBackend, SshMixin):
 
     def _create_connection(self, run_args=[]):
         # NB! It's connection to the micropython process, not to the host
-        from thonny.plugins.quecpython.backend.ssh_connection import SshProcessConnection
+        from thonnycontrib.quecpython.backend.ssh_connection import SshProcessConnection
 
         return SshProcessConnection(
             self._client,

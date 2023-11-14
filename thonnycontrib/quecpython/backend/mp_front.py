@@ -96,7 +96,7 @@ class BareMetalQuecPythonProxy(QuecPythonProxy):
         return None
 
     def get_pip_gui_class(self):
-        from thonny.plugins.quecpython.backend.pip_gui import QuecPythonPipDialog
+        from thonnycontrib.quecpython.backend.pip_gui import QuecPythonPipDialog
 
         return QuecPythonPipDialog
 
@@ -170,9 +170,9 @@ class BareMetalQuecPythonProxy(QuecPythonProxy):
         return False
 
     def _get_backend_launcher_path(self) -> str:
-        import thonny.plugins.quecpython.backend.bare_metal_backend
+        from thonnycontrib.quecpython.backend import bare_metal_backend
 
-        return thonny.plugins.quecpython.backend.bare_metal_backend.__file__
+        return bare_metal_backend.__file__
 
     def _get_write_block_size(self):
         return get_workbench().get_option(self.backend_name + ".write_block_size")
@@ -394,7 +394,7 @@ class BareMetalQuecPythonProxy(QuecPythonProxy):
                 running.get_front_interpreter_for_subprocess(sys.executable),
                 "-m",
                 # "serial.tools.miniterm",
-                "thonny.plugins.quecpython.backend.miniterm_wrapper",
+                "thonnycontrib.quecpython.backend.miniterm_wrapper",
                 "--exit-char",
                 "20",
                 "--menu-char",
@@ -700,10 +700,10 @@ class LocalQuecPythonProxy(QuecPythonProxy):
         return self._target_executable
 
     def _get_launcher_with_args(self):
-        import thonny.plugins.quecpython.backend.os_mp_backend
+        from thonnycontrib.quecpython.backend import os_mp_backend
 
         cmd = [
-            thonny.plugins.quecpython.backend.os_mp_backend.__file__,
+            os_mp_backend.__file__,
             repr(
                 {
                     "interpreter": self._target_executable,
@@ -829,7 +829,7 @@ class SshQuecPythonProxy(QuecPythonProxy):
         super().__init__(clean)
 
     def _get_launcher_with_args(self):
-        import thonny.plugins.quecpython.backend.os_mp_backend
+        from thonnycontrib.quecpython.backend import os_mp_backend
 
         args = {
             "cwd": get_workbench().get_option(f"{self.backend_name}.cwd") or "",
@@ -842,7 +842,7 @@ class SshQuecPythonProxy(QuecPythonProxy):
         args.update(self._get_extra_launcher_args())
 
         cmd = [
-            thonny.plugins.quecpython.backend.os_mp_backend.__file__,
+            os_mp_backend.__file__,
             repr(args),
         ]
         return cmd

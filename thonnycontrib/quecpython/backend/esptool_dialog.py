@@ -12,13 +12,13 @@ from typing import Any, Dict, Optional, Tuple
 from thonny import get_runner, get_workbench, ui_utils
 from thonny.common import normpath_with_actual_case
 from thonny.misc_utils import get_menu_char, running_on_windows
-from thonny.plugins.quecpython.backend import BareMetalQuecPythonProxy, list_serial_ports
-from thonny.plugins.quecpython.backend.base_flashing_dialog import (
+from thonnycontrib.quecpython.backend.mp_front import BareMetalQuecPythonProxy, list_serial_ports
+from thonnycontrib.quecpython.backend.base_flashing_dialog import (
     BaseFlashingDialog,
     TargetInfo,
     family_code_to_name,
 )
-from thonny.plugins.quecpython.backend.mp_front import get_serial_port_label
+from thonnycontrib.quecpython.backend.mp_front import get_serial_port_label
 from thonny.running import get_front_interpreter_for_subprocess
 from thonny.ui_utils import EnhancedBooleanVar, MappingCombobox
 

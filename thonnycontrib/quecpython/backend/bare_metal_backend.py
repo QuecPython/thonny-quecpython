@@ -26,8 +26,8 @@ from thonny.common import (
     serialize_message,
 )
 from thonny.misc_utils import find_volumes_by_name
-from thonny.plugins.quecpython.backend.connection import QuecPythonConnection
-from thonny.plugins.quecpython.backend.mp_back import (
+from thonnycontrib.quecpython.backend.connection import QuecPythonConnection
+from thonnycontrib.quecpython.backend.mp_back import (
     EOT,
     NORMAL_MODE_CMD,
     PASTE_MODE_CMD,
@@ -44,12 +44,12 @@ from thonny.plugins.quecpython.backend.mp_back import (
     is_continuation_byte,
     starts_with_continuation_byte,
 )
-from thonny.plugins.quecpython.backend.mp_common import (
+from thonnycontrib.quecpython.backend.mp_common import (
     PASTE_SUBMIT_MODE,
     RAW_PASTE_SUBMIT_MODE,
     RAW_SUBMIT_MODE,
 )
-from thonny.plugins.quecpython.backend.webrepl_connection import WebReplConnection
+from thonnycontrib.quecpython.backend.webrepl_connection import WebReplConnection
 
 RAW_PASTE_COMMAND = b"\x05A\x01"
 RAW_PASTE_CONFIRMATION = b"R\x01"
@@ -122,7 +122,7 @@ FALLBACK_BUILTIN_MODULES = [
 ]
 
 # Can't use __name__, because it will be "__main__"
-logger = getLogger("thonny.plugins.quecpython.backend.bare_metal_backend")
+logger = getLogger(".bare_metal_backend")
 
 
 class BareMetalQuecPythonBackend(QuecPythonBackend, UploadDownloadMixin):
@@ -207,7 +207,7 @@ class BareMetalQuecPythonBackend(QuecPythonBackend, UploadDownloadMixin):
         if self._read_block_size and self._read_block_size > 0:
             # make sure management prints are done in blocks
             result = result.replace("cls.builtins.print", "cls.controlled_print")
-            from thonny.plugins.quecpython.backend.serial_connection import OUTPUT_ENQ
+            from thonnycontrib.quecpython.backend.serial_connection import OUTPUT_ENQ
 
             result += indent(
                 dedent(
@@ -544,7 +544,7 @@ class BareMetalQuecPythonBackend(QuecPythonBackend, UploadDownloadMixin):
             self._connection = self._connection.close_and_return_new_connection()
 
     def _connected_over_webrepl(self):
-        from thonny.plugins.quecpython.backend.webrepl_connection import WebReplConnection
+        from thonnycontrib.quecpython.backend.webrepl_connection import WebReplConnection
 
         return isinstance(self._connection, WebReplConnection)
 
@@ -1737,7 +1737,7 @@ def launch_bare_metal_backend(backend_class: Callable[..., BareMetalQuecPythonBa
         elif args["port"] == "webrepl":
             connection = WebReplConnection(args["url"], args["password"])
         else:
-            from thonny.plugins.quecpython.backend.serial_connection import (
+            from thonnycontrib.quecpython.backend.serial_connection import (
                 DifficultSerialConnection,
                 SerialConnection,
             )

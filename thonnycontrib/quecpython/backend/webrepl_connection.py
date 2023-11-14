@@ -3,7 +3,7 @@ import threading
 from logging import DEBUG, getLogger
 from queue import Queue
 
-from .connection import QuecPythonConnection
+from thonnycontrib.quecpython.backend.connection import QuecPythonConnection
 
 logger = getLogger(__name__)
 

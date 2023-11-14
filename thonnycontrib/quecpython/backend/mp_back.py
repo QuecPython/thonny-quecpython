@@ -75,7 +75,7 @@ from thonny.common import (
     parse_message,
     serialize_message,
 )
-from thonny.plugins.quecpython.backend.connection import QuecPythonConnection
+from thonnycontrib.quecpython.backend.connection import QuecPythonConnection
 
 ENCODING = "utf-8"
 

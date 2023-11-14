@@ -1,7 +1,7 @@
 import signal
 import sys
 
-from thonny.plugins.quecpython.backend.connection import QuecPythonConnection
+from thonnycontrib.quecpython.backend.connection import QuecPythonConnection
 
 
 class SubprocessConnection(QuecPythonConnection):
