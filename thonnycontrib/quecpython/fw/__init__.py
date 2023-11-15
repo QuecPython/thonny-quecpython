@@ -13,12 +13,13 @@
 # limitations under the License.
 
 import glob
-import shutil
+import json
 import tempfile
 from threading import Lock
 from .proc import Process
 from .utils import *
 from logging import getLogger
+from ..locale import tr
 
 
 EXES_PATH = Path(__file__).with_name('exes')
@@ -137,8 +138,30 @@ class LineParserUnisoc(object):
             raise Exception('Unisoc FW Download Failed.')
 
 
-def run_cmd(cmd, process_type, cwd):
-    logger.info('enter run_cmd method, args: {}'.format((cmd, process_type, cwd,)))
+class LineParser360W(object):
+
+    def __init__(self):
+        self.progress = 0
+
+    def parse(self, line):
+        try:
+            data = json.loads(line)
+        except Exception as e:
+            return 1
+
+        if data['Status'] == 'Programming':
+            return data['Progress']
+        else:
+            if data['Status'] == 'Ready':
+                return 5
+            elif data['Status'] == 'Finished' and data['Message'] == 'Success':
+                return 100
+            else:
+                raise Exception('360W Download Failed!')
+
+
+def run_cmd(cmd, platform, cwd):
+    logger.info('enter run_cmd method, args: {}'.format((cmd, platform, cwd,)))
 
     with DownloadLogFile() as f:
 
@@ -146,19 +169,26 @@ def run_cmd(cmd, process_type, cwd):
         proc.run()
         running_timeout = 60
 
-        if process_type == "unisoc":
-            parser = LineParserUnisoc()
-        elif process_type == "NB":
-            parser = LineParserNB()
-        elif process_type == "BG95":
-            parser = LineParserBG95()
-        elif process_type == '200A':
-            parser = LineParser200A()
-        else:
+        if platform.upper() in ["ASR", "ASR1601", "ASR1606"]:
             parser = LineParserAsr()
+        elif platform.upper() in ["UNISOC", "UNISOC8910", "UNISOC8850"]:
+            parser = LineParserUnisoc()
+        elif platform.upper() == "RDA8908A":
+            parser = LineParserNB()
+        elif platform.upper() == "ASR1803S":
+            parser = LineParser200A()
+        elif platform.upper() == "MDM9X05":
+            parser = LineParserBG95()
+        elif platform.upper() == "EIGEN":
+            pass
+        elif platform.upper() == "FCM360W":
+            parser = LineParser360W()
+        else:
+            pass
 
         for line in proc.read_lines(timeout=running_timeout):
             f.write(line)
+            logger.info(line)
             rv = parser.parse(line)
             if rv:
                 yield rv
@@ -166,30 +196,38 @@ def run_cmd(cmd, process_type, cwd):
 
 class FwDownloadHandler(object):
 
-    def __init__(self, firmware_file_path, com_info):
+    def __init__(self, firmware_file_path, platform, com_info):
         self.fw_filepath = Path(firmware_file_path)
         self.com_info = com_info
+        self.platform = platform
 
     def download(self):
         logger.info('enter FwDownloadHandler.download method.')
         if Path(self.fw_filepath).exists():
-            logger.info('fw_filepath with suffix \"{}\".'.format(self.fw_filepath.suffix))
-            if self.fw_filepath.suffix == ".pac":
-                return self.rdaFwDownload()
-            elif self.fw_filepath.suffix == ".lod":
-                return self.nbFwDownload()
-            elif self.fw_filepath.suffix == ".blf":
-                return self.blfFwDownload()
-            elif self.fw_filepath.suffix == ".mbn":
-                return self.mbnFwDownload()
-            else:
+            logger.info('fw_filepath: \"{}\".'.format(self.fw_filepath))
+            if self.platform.upper() in ["ASR", "ASR1601", "ASR1606"]:
                 return self.asrFwDownload()
+            elif self.platform.lower() in ["unisoc", "unisoc8910", "unisoc8850"]:
+                return self.rdaFwDownload()
+            elif self.platform.upper() == "RDA8908A":
+                return self.nbFwDownload()
+            elif self.platform.upper() == "MDM9X05":
+                return self.mbnFwDownload()
+            elif self.platform.upper() == "ASR1803S":
+                return self.blfFwDownload()
+            elif self.platform.upper() == "FCM360W":
+                return self.wifi360FwDownload()
+            elif self.platform.upper() == "FC41D":
+                return self.wifi41DFwDownload()
+            elif self.platform.upper() == "EIGEN":
+                return self.EigenFwDownload()
+            else:
+                raise Exception(tr('firmware not supported'))
         else:
-            raise Exception('固件文件不存在。')
+            raise Exception(tr('fw filepath not exists'))
 
     def rdaFwDownload(self):
         logger.info('enter FwDownloadHandler.rdaFwDownload method.')
-
         tmp_path = tempfile.mkdtemp()
         config_pac = myconf()
         config_pac.read(str(EXES_PATH / "rda/ResearchDownload.ini"))
@@ -292,32 +330,61 @@ class FwDownloadHandler(object):
         else:
             raise Exception('检查固件zip包是否未解压,请解压后重试')
 
+    def wifi360FwDownload(self):
+        tmp_path = tempfile.mkdtemp()
+        logger.info("tmp_path: {}".format(tmp_path))
+        tempZip_filename = self.fw_filepath.with_suffix('.zip').name
+        logger.info("临时文件名: " + tempZip_filename)
+        shutil.copyfile(
+            str(self.fw_filepath),
+            str(Path(tmp_path) / tempZip_filename)
+        )
+        shutil.copyfile(
+            str(EXES_PATH / "FCM360W/EswinFlashTool.exe"),
+            str(Path(tmp_path) / "EswinFlashTool.exe")
+        )
+
+        return self.fw_download(
+            str(Path(tmp_path) / "EswinFlashTool.exe"),
+            str(Path(tmp_path) / tempZip_filename)
+        )
+
+    def wifi41DFwDownload(self):
+        pass
+
+    def EigenFwDownload(self):
+        pass
+
     def fw_download(self, download_exe_path, fw_filepath):
         logger.info('enter FwDownloadHandler.fw_download method.')
 
-        if self.fw_filepath.suffix == ".pac":
-            cmd = [download_exe_path, '-pac', fw_filepath]
-            logger.info('------------------unisoc downloading upgrade package------------------')
-            downloadProcess = 'unisoc'
-        elif self.fw_filepath.suffix == ".lod":
-            cmd = [download_exe_path, self.com_info['port'][3:], self.com_info['baudrate'], fw_filepath]
-            logger.info('------------------NB downloading upgrade package------------------')
-            downloadProcess = 'NB'
-        elif self.fw_filepath.suffix == ".blf":
-            cmd = [download_exe_path, '-f', fw_filepath]
-            logger.info('------------------200A download downloading factory package(blf)------------------')
-            downloadProcess = '200A'
-        elif self.fw_filepath.suffix == ".mbn":
-            cmd = [download_exe_path, self.com_info['port'][3:], self.com_info['baudrate'], fw_filepath]
-            logger.info('------------------BG95 download downloading factory package(mbn)------------------')
-            downloadProcess = 'BG95'
-        else:
+        if self.platform.upper() in ["ASR", "ASR1601", "ASR1606"]:
             cmd = [
-                download_exe_path, '-p', self.com_info['port'],
+                download_exe_path, '-p', self.com_info['port'][3:],
                 '-a', '-q', '-r', '-s', self.com_info['baudrate'], fw_filepath
             ]
             logger.info('------------------adownload downloading factory package------------------')
-            downloadProcess = '"progress" :'
+        elif self.platform.upper() in ["UNISOC", "UNISOC8910", "UNISOC8850"]:
+            cmd = [download_exe_path, '-pac', fw_filepath]
+            logger.info('------------------unisoc downloading upgrade package------------------')
+        elif self.platform.upper() == "RDA8908A":
+            cmd = [download_exe_path, self.com_info['port'][3:], '115200', fw_filepath]
+            logger.info('------------------NB downloading upgrade package------------------')
+        elif self.platform.upper() == "ASR1803S":
+            cmd = [download_exe_path, '-f', fw_filepath]
+            logger.info('------------------200A download downloading factory package(blf)------------------')
+        elif self.platform.upper() == "MDM9X05":
+            cmd = [download_exe_path, self.com_info['port'][3:], '115200', fw_filepath]
+            logger.info('------------------BG95 download downloading factory package(mbn)------------------')
+        elif self.platform.upper() == "EIGEN":
+            pass
+        elif self.platform.upper() == "FCM360W":
+            cmd = [download_exe_path, '-p', self.com_info['port'][3:], '-b', "921600", '-file', fw_filepath]
+            print('------------------ FCM360W downloading factory package: ------------------')
+        elif self.platform.upper() == "FC41D":
+            pass
+        else:
+            pass
 
         logger.info('run cmd: {}'.format(cmd))
-        return run_cmd(cmd, downloadProcess, str(Path(download_exe_path).parent))
+        return run_cmd(cmd, self.platform, str(Path(download_exe_path).parent))

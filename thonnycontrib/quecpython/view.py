@@ -13,6 +13,7 @@
 # limitations under the License.
 
 """QuecPython编程套件主窗口"""
+import os
 from threading import Thread
 from pathlib import Path
 from logging import getLogger
@@ -23,7 +24,7 @@ from tkinter import ttk
 from tkinter import filedialog, messagebox
 from thonny import get_workbench
 from .api import DownLoadFWApi
-from .fw.utils import get_com_port
+from .fw.utils import get_fw_and_platform, get_com_port
 from .locale import tr
 
 
@@ -94,7 +95,7 @@ class QuecView(tk.Frame):
         fw_file_path_label = tk.Label(fw_label_frame, text=tr('firmware path')+':')
         fw_file_path_label.grid(row=1, column=0, sticky=tk.EW, padx=(5, 0), pady=(5, 5))
         self.firmware_file_path_stringvar = tk.StringVar()
-        self.firmware_file_path_stringvar.trace_variable('w', self.on_fw_file_path_write)
+        # self.firmware_file_path_stringvar.trace_variable('w', self.on_fw_file_path_write)
         fw_file_path_entry = tk.Entry(fw_label_frame, textvariable=self.firmware_file_path_stringvar, state='readonly')
         fw_file_path_entry.grid(row=1, column=1, columnspan=11, sticky=tk.EW, padx=(0, 5), pady=(5, 5))
 
@@ -183,8 +184,8 @@ class QuecView(tk.Frame):
         else:
             self.port_combobox.current(0)
 
-    def get_validated_com_port(self, firmware_file_path):
-        comport = get_com_port(Path(firmware_file_path))
+    def get_validated_com_port(self, fw_file_path, platform):
+        comport = get_com_port(fw_file_path, platform)
         logger.info('detect comport is: {}'.format(comport))
         if comport is None:
             messagebox.showerror(
@@ -196,7 +197,7 @@ class QuecView(tk.Frame):
 
         rv = {'port': comport, 'baudrate': '115200'}
 
-        if comport in ("NB_DOWNLOAD", "mbn_DOWNLOAD"):
+        if comport in ("NB_DOWNLOAD", "ASR1803S_DOWNLOAD", "mbn_DOWNLOAD", "WIFI_DOWNLOAD"):
             if (self.serial is None) or (not self.serial.isOpen()):
                 messagebox.showinfo(
                     title=tr('Choose a COM Port'),
@@ -259,12 +260,22 @@ class QuecView(tk.Frame):
         if not firmware_file_path:
             return
 
-        com_info = self.get_validated_com_port(firmware_file_path)
+        fw_file_path, platform = get_fw_and_platform(firmware_file_path)
+        logger.info('fw file: {}'.format(fw_file_path))
+        logger.info('platform: {}'.format(platform))
+
+        com_info = self.get_validated_com_port(fw_file_path, platform)
         if not com_info:
             return
 
         self.download_widgets_ready()
-        Thread(target=DownLoadFWApi(firmware_file_path, com_info)).start()
+        Thread(
+            target=DownLoadFWApi(
+                fw_file_path,
+                platform,
+                com_info,
+            )
+        ).start()
 
     def update_progress(self, payload):
         if payload.code == DownLoadFWApi.OK:
