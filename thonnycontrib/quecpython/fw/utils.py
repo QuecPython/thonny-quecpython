@@ -18,6 +18,9 @@ import json
 import zipfile
 import serial
 import configparser
+import sys
+import shutil
+import codecs
 from pathlib import Path
 from serial.tools import list_ports
 
@@ -96,11 +99,6 @@ class myconf(configparser.ConfigParser):
 
     def optionxform(self, optionstr):
         return optionstr
-
-
-import sys
-import shutil
-import codecs
 
 
 def extractFileName(path):

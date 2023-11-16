@@ -353,7 +353,74 @@ class FwDownloadHandler(object):
         pass
 
     def EigenFwDownload(self):
-        pass
+        tmp_path = tempfile.mkdtemp()
+        logger.info("tmp_path: ", tmp_path)
+        fdir1 = str(self.fw_filepath.parent)
+        shutil.copytree(fdir1, str(Path(tmp_path) / "fw"))
+        shutil.copytree(str(EXES_PATH / "Eigen"), str(tmp_path / "Eigen"))
+
+        try:
+            config = configparser.ConfigParser(interpolation=None)
+            logger.info('quec_download_config.ini path: {}'.format(str(Path(tmp_path) / "fw/quec_download_config.ini")))
+            config.read(str(Path(tmp_path) / "fw/quec_download_config.ini"))
+            File_Count = int(config.get('File', 'File_Count'))
+            ql.set_value("File_Count", File_Count)
+
+            ap_application_addr = config.get('File_1', 'START_ADDR')
+            ap_application_max = config.get('File_1', 'MAX_SIZE')
+            ql.set_value("flexfile2", ap_application_addr + " " + ap_application_max)
+
+            ap_updater_addr = config.get('File_2', 'START_ADDR')
+            ap_updater_max = config.get('File_2', 'MAX_SIZE')
+            ql.set_value("flexfile3", ap_updater_addr + " " + ap_updater_max)
+
+            customer_fs_addr = config.get('File_3', 'START_ADDR')
+            customer_fs_max = config.get('File_3', 'MAX_SIZE')
+            ql.set_value("flexfile4", customer_fs_addr + " " + customer_fs_max)
+
+            if File_Count == 4:
+                customer_backup_fs_addr = config.get('File_4', 'START_ADDR')
+                customer_backup_fs_max = config.get('File_4', 'MAX_SIZE')
+
+            binpkg_config = configparser.ConfigParser(interpolation=None)
+            binpkg_config_ini = str(Path(tmp_path) / "Eigen/config.ini")
+            binpkg_config.read(binpkg_config_ini)
+
+            binpkg_config.set('package_info', 'arg_pkg_path_val', str(Path(tmp_path) / "fw" / self.fw_filepath.name))
+
+            binpkg_config.set('bootloader', 'blpath', str(Path(tmp_path) / "blloadskip = 0"))
+            binpkg_config.set('system', 'syspath', str(Path(tmp_path) / "sysloadskip = 0"))
+            binpkg_config.set('cp_system', 'cp_syspath', str(Path(tmp_path) / "cp_sysloadskip = 0"))
+
+            binpkg_config.set('flexfile2', 'filepath',
+                                   str(Path(tmp_path) / "fw/ap_application.bin"))
+            binpkg_config.set('flexfile2', 'burnaddr', ap_application_addr)
+
+            binpkg_config.set('flexfile3', 'filepath', str(Path(tmp_path) / "fw/ap_updater.bin"))
+            binpkg_config.set('flexfile3', 'burnaddr', ap_updater_addr)
+
+            binpkg_config.set('flexfile4', 'filepath', str(Path(tmp_path) / "fw/customer_fs.bin"))
+            binpkg_config.set('flexfile4', 'burnaddr', customer_fs_addr)
+            if File_Count == 4:
+                binpkg_config.set('flexfile5', 'filepath',
+                                       str(Path(tmp_path) / "fw/customer_backup_fs.bin"))
+                binpkg_config.set('flexfile5', 'burnaddr', customer_backup_fs_addr)
+            else:
+                binpkg_config.remove_section('flexfile5')
+
+        except Exception as e:
+            raise Exception(tr("please check if the firmware is ok."))
+
+        binpkg_config = extra['binpkg_config']
+        binpkg_config_ini = extra['binpkg_config_ini']
+        binpkg_config.set('config', 'line_0_com', self.com_info['port'])
+        with open(binpkg_config_ini, "w+", encoding='utf-8') as f:
+            binpkg_config.write(f)
+
+        return self.fw_download(
+            str(Path(tmp_path) / "Eigen/flashtoolcli1.exe"),
+            str(Path(tmp_path) / "fw" / self.fw_filepath.name)
+        )
 
     def fw_download(self, download_exe_path, fw_filepath):
         logger.info('enter FwDownloadHandler.fw_download method.')
@@ -377,7 +444,8 @@ class FwDownloadHandler(object):
             cmd = [download_exe_path, self.com_info['port'][3:], '115200', fw_filepath]
             logger.info('------------------BG95 download downloading factory package(mbn)------------------')
         elif self.platform.upper() == "EIGEN":
-            pass
+            cmd = [download_name, '--cfgfile ' + self.binpkg_config_ini, '--port="%s"' % comport]
+            print('------------------Eigen downloading upgrade package(binpkg): ------------------')
         elif self.platform.upper() == "FCM360W":
             cmd = [download_exe_path, '-p', self.com_info['port'][3:], '-b', "921600", '-file', fw_filepath]
             print('------------------ FCM360W downloading factory package: ------------------')
