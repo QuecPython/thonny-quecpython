@@ -17,6 +17,7 @@ from logging import getLogger
 from pubsub import pub
 from .fw import FwDownloadHandler, DownloadLogFile
 
+
 logger = getLogger(__name__)
 
 

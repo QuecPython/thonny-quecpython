@@ -163,8 +163,9 @@ def get_com_port(fw_file_path, platform):
         atPort = get_com_port_number(
             fw_config["firmware"]["vid_pid_work"]
         )
+        return atPort
     elif platform.upper() in ["ASR", "ASR1601", "ASR1606"]:
-        atPort = get_com_port_v2(fw_config["firmware"]["vid_pid_work"], fw_config["firmware"]["Quectel_USB_AT_Port"])
+        atPort = get_com_port(fw_config["firmware"]["vid_pid_work"], fw_config["firmware"]["Quectel_USB_AT_Port"])
     else:
         return "WIFI_DOWNLOAD"
 
@@ -183,9 +184,9 @@ def get_com_port(fw_file_path, platform):
 
 
 def get_fw_and_platform(fw_filepath):
-        newFWFolder = str(Path(__file__).parent / 'newFW')
-        makeCleanDir(newFWFolder)
         if isZip(fw_filepath):
+            newFWFolder = str(Path(__file__).parent / 'newFW')
+            makeCleanDir(newFWFolder)
             unzipFile(fw_filepath, newFWFolder)
             if ifExist(newFWFolder + "\\platform_config.json"):
                 try:

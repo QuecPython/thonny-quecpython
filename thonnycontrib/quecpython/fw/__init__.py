@@ -16,182 +16,14 @@ import glob
 import json
 import tempfile
 from threading import Lock
-from .proc import Process
-from .utils import *
 from logging import getLogger
 from ..locale import tr
+from .utils import *
+from .proc import run_cmd, DownloadLogFile
 
 
 EXES_PATH = Path(__file__).with_name('exes')
 logger = getLogger(__name__)
-
-
-class DownloadLogFile(object):
-    log_file_path = Path(__file__).parent / 'download.log'
-    lock = Lock()
-
-    def __init__(self):
-        self.fb = None
-
-    def __enter__(self):
-        self.lock.acquire()
-        self.fb = open(self.log_file_path, 'w', encoding='utf-8')
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.fb.close()
-        self.lock.release()
-
-    def write(self, data):
-        if self.fb is None:
-            raise Exception('DownloadLogFile not open.')
-        self.fb.write(data)
-
-    def read(self):
-        if self.fb is None:
-            raise Exception('DownloadLogFile not open.')
-        self.fb.read()
-
-
-class LineParserAsr(object):
-
-    def __init__(self):
-        self.json_string = ""
-        self.flag = False
-
-    def parse(self, line):
-        if line.startswith('{'):
-            self.json_string += line
-            self.flag = True
-            return
-
-        if self.flag:
-            if not line.startswith('}'):
-                self.json_string += line
-                return
-            else:
-                self.json_string += line
-                rv = json.loads(self.json_string)
-                self.json_string = ""
-                self.flag = False
-                if rv and rv['status'] != 'OFFLINE':
-                    return rv['progress']
-
-
-class LineParser200A(object):
-
-    def parse(self, line):
-        if "Successfully to prepare temp folder file for wtptp download" in line:
-            return "RESET"
-
-        if "Download percentage" in line:
-            return int(line.strip().split(' ')[-1])
-
-        if "flash percentage" in line:
-            return int(line.strip().split(' ')[-1])
-
-
-class LineParserBG95(object):
-
-    def __init__(self):
-        self.progress = 0
-
-    def parse(self, line):
-
-        if '[1]DL-' in line:
-            self.progress += 2
-            return self.progress
-
-        if '[1]Total upgrade time is' in line:
-            return 100
-
-        if '[1]FW upgrade fail' in line:
-            raise Exception('BG95 FW Download Failed.')
-
-
-class LineParserNB(object):
-
-    def parse(self, line):
-        if '[1]FW upgrade fail.' in line:
-            raise Exception('NB FW Download Failed.')
-
-        if "[1]Upgrade:" in line:
-            progress = int(line.replace("[1]Upgrade:", '').strip()[:-1])
-            return progress
-
-
-class LineParserUnisoc(object):
-
-    def __init__(self):
-        self.progress = 0
-
-    def parse(self, line):
-
-        if "Downloading..." in line:
-            self.progress += 1
-            return self.progress * 10
-
-        if "DownLoad Passed" in line:
-            return 100
-
-        if "[ERROR] DownLoad Failed" in line:
-            raise Exception('Unisoc FW Download Failed.')
-
-
-class LineParser360W(object):
-
-    def __init__(self):
-        self.progress = 0
-
-    def parse(self, line):
-        try:
-            data = json.loads(line)
-        except Exception as e:
-            return 1
-
-        if data['Status'] == 'Programming':
-            return data['Progress']
-        else:
-            if data['Status'] == 'Ready':
-                return 5
-            elif data['Status'] == 'Finished' and data['Message'] == 'Success':
-                return 100
-            else:
-                raise Exception('360W Download Failed!')
-
-
-def run_cmd(cmd, platform, cwd):
-    logger.info('enter run_cmd method, args: {}'.format((cmd, platform, cwd,)))
-
-    with DownloadLogFile() as f:
-
-        proc = Process(cmd, cwd)
-        proc.run()
-        running_timeout = 60
-
-        if platform.upper() in ["ASR", "ASR1601", "ASR1606"]:
-            parser = LineParserAsr()
-        elif platform.upper() in ["UNISOC", "UNISOC8910", "UNISOC8850"]:
-            parser = LineParserUnisoc()
-        elif platform.upper() == "RDA8908A":
-            parser = LineParserNB()
-        elif platform.upper() == "ASR1803S":
-            parser = LineParser200A()
-        elif platform.upper() == "MDM9X05":
-            parser = LineParserBG95()
-        elif platform.upper() == "EIGEN":
-            pass
-        elif platform.upper() == "FCM360W":
-            parser = LineParser360W()
-        else:
-            pass
-
-        for line in proc.read_lines(timeout=running_timeout):
-            f.write(line)
-            logger.info(line)
-            rv = parser.parse(line)
-            if rv:
-                yield rv
 
 
 class FwDownloadHandler(object):
@@ -354,33 +186,33 @@ class FwDownloadHandler(object):
 
     def EigenFwDownload(self):
         tmp_path = tempfile.mkdtemp()
-        logger.info("tmp_path: ", tmp_path)
+        logger.info("tmp_path: {}".format(tmp_path))
         fdir1 = str(self.fw_filepath.parent)
         shutil.copytree(fdir1, str(Path(tmp_path) / "fw"))
-        shutil.copytree(str(EXES_PATH / "Eigen"), str(tmp_path / "Eigen"))
+        shutil.copytree(str(EXES_PATH / "Eigen"), str(Path(tmp_path) / "Eigen"))
 
         try:
             config = configparser.ConfigParser(interpolation=None)
             logger.info('quec_download_config.ini path: {}'.format(str(Path(tmp_path) / "fw/quec_download_config.ini")))
             config.read(str(Path(tmp_path) / "fw/quec_download_config.ini"))
             File_Count = int(config.get('File', 'File_Count'))
-            ql.set_value("File_Count", File_Count)
 
             ap_application_addr = config.get('File_1', 'START_ADDR')
             ap_application_max = config.get('File_1', 'MAX_SIZE')
-            ql.set_value("flexfile2", ap_application_addr + " " + ap_application_max)
+            flexfile2 = ap_application_addr + " " + ap_application_max
 
             ap_updater_addr = config.get('File_2', 'START_ADDR')
             ap_updater_max = config.get('File_2', 'MAX_SIZE')
-            ql.set_value("flexfile3", ap_updater_addr + " " + ap_updater_max)
+            flexfile3 = ap_updater_addr + " " + ap_updater_max
 
             customer_fs_addr = config.get('File_3', 'START_ADDR')
             customer_fs_max = config.get('File_3', 'MAX_SIZE')
-            ql.set_value("flexfile4", customer_fs_addr + " " + customer_fs_max)
+            flexfile4 = customer_fs_addr + " " + customer_fs_max
 
             if File_Count == 4:
                 customer_backup_fs_addr = config.get('File_4', 'START_ADDR')
                 customer_backup_fs_max = config.get('File_4', 'MAX_SIZE')
+                flexfile5 = customer_backup_fs_addr + " " + customer_backup_fs_max
 
             binpkg_config = configparser.ConfigParser(interpolation=None)
             binpkg_config_ini = str(Path(tmp_path) / "Eigen/config.ini")
@@ -411,18 +243,27 @@ class FwDownloadHandler(object):
         except Exception as e:
             raise Exception(tr("please check if the firmware is ok."))
 
-        binpkg_config = extra['binpkg_config']
-        binpkg_config_ini = extra['binpkg_config_ini']
         binpkg_config.set('config', 'line_0_com', self.com_info['port'])
         with open(binpkg_config_ini, "w+", encoding='utf-8') as f:
             binpkg_config.write(f)
 
+        extra = dict(
+            File_Count=File_Count,
+            flexfile2=flexfile2,
+            flexfile3=flexfile3,
+            flexfile4=flexfile4,
+        )
+        if File_Count == 4:
+            extra.update(dict(flexfile5=flexfile5))
+
         return self.fw_download(
             str(Path(tmp_path) / "Eigen/flashtoolcli1.exe"),
-            str(Path(tmp_path) / "fw" / self.fw_filepath.name)
+            str(Path(tmp_path) / "fw" / self.fw_filepath.name),
+            binpkg_config_ini=binpkg_config_ini,
+            **extra
         )
 
-    def fw_download(self, download_exe_path, fw_filepath):
+    def fw_download(self, download_exe_path, fw_filepath, **extra):
         logger.info('enter FwDownloadHandler.fw_download method.')
 
         if self.platform.upper() in ["ASR", "ASR1601", "ASR1606"]:
@@ -444,7 +285,8 @@ class FwDownloadHandler(object):
             cmd = [download_exe_path, self.com_info['port'][3:], '115200', fw_filepath]
             logger.info('------------------BG95 download downloading factory package(mbn)------------------')
         elif self.platform.upper() == "EIGEN":
-            cmd = [download_name, '--cfgfile ' + self.binpkg_config_ini, '--port="%s"' % comport]
+            binpkg_config_ini = extra['binpkg_config_ini']
+            cmd = [download_exe_path, '--cfgfile', binpkg_config_ini,  '--port', self.com_info['port']]
             print('------------------Eigen downloading upgrade package(binpkg): ------------------')
         elif self.platform.upper() == "FCM360W":
             cmd = [download_exe_path, '-p', self.com_info['port'][3:], '-b', "921600", '-file', fw_filepath]
@@ -455,4 +297,4 @@ class FwDownloadHandler(object):
             pass
 
         logger.info('run cmd: {}'.format(cmd))
-        return run_cmd(cmd, self.platform, str(Path(download_exe_path).parent))
+        return run_cmd(cmd, self.platform, str(Path(download_exe_path).parent), **extra)

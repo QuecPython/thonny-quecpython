@@ -19,7 +19,9 @@
 										   "EC600SCNLB":"2C7C:6002",
 										   "EC600UCNLB":"2C7C:0901",
 										   "BC25": "10C4:EA70",
-										   "EC800GCNGA": "2C7C:0904"
+										   "EC800GCNGA": "2C7C:0904",
+										   "Eigen": "17D1:0001",
+										   "BG95": "2C7C:0700"
 										  },
 			"vid_pid_dwload"			: {"EC600SCNAA":"2ECC:3017",
 										   "EC600SCNLB":"2ECC:3004",
