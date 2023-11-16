@@ -109,7 +109,7 @@ class BaseExecutor(object):
         proc = Process(self.cmd, self.cwd)
         proc.run()
         with DownloadLogFile() as f:
-            for line in self.proc.read_lines(timeout=60):
+            for line in proc.read_lines(timeout=60):
                 f.write(line)
                 logger.info(line)
                 rv = self.parse(line)
@@ -125,6 +125,8 @@ class _AsrExecutor(BaseExecutor):
     def __init__(self, cmd, cwd, **extra):
         self.json_string = ""
         self.flag = False
+        self.progress = 0
+        self.log_string = ""
         super().__init__(cmd, cwd, **extra)
 
     def parse(self, line):
@@ -143,20 +145,29 @@ class _AsrExecutor(BaseExecutor):
                 self.json_string = ""
                 self.flag = False
                 if rv and rv['status'] != 'OFFLINE':
-                    return rv['progress']
-
+                    self.progress = rv['progress']
+                    return self.log_string, self.progress
+        else:
+            self.log_string = line
+            return self.log_string, self.progress
 
 class _200AExecutor(BaseExecutor):
+
+    def __init__(self, cmd, cwd, **extra):
+        self.progress = 0
+        super().__init__(cmd, cwd, **extra)
 
     def parse(self, line):
         if "Successfully to prepare temp folder file for wtptp download" in line:
             return "RESET"
-
-        if "Download percentage" in line:
-            return int(line.strip().split(' ')[-1])
-
-        if "flash percentage" in line:
-            return int(line.strip().split(' ')[-1])
+        elif "Download percentage" in line:
+            self.progress = int(line.strip().split(' ')[-1])
+            return line, self.progress
+        elif "flash percentage" in line:
+            self.progress = int(line.strip().split(' ')[-1])
+            return line, self.progress
+        else:
+            return line, self.progress
 
 
 class _BG95Executor(BaseExecutor):
@@ -169,24 +180,30 @@ class _BG95Executor(BaseExecutor):
 
         if '[1]DL-' in line:
             self.progress += 2
-            return self.progress
-
-        if '[1]Total upgrade time is' in line:
-            return 100
-
-        if '[1]FW upgrade fail' in line:
+            return line, self.progress
+        elif '[1]FW upgrade success.' in line:
+            return line, 100
+        elif '[1]FW upgrade fail' in line:
             raise Exception('BG95 FW Download Failed.')
+        else:
+            return line, self.progress
 
 
 class _NBExecutor(BaseExecutor):
+
+    def __init__(self, cmd, cwd, **extra):
+        self.progress = 0
+        super().__init__(cmd, cwd, **extra)
 
     def parse(self, line):
         if '[1]FW upgrade fail.' in line:
             raise Exception('NB FW Download Failed.')
 
         if "[1]Upgrade:" in line:
-            progress = int(line.replace("[1]Upgrade:", '').strip()[:-1])
-            return progress
+            self.progress = int(line.replace("[1]Upgrade:", '').strip()[:-1])
+            return line, self.progress
+        else:
+            return line, self.progress
 
 
 class _UnisocExecutor(BaseExecutor):
@@ -199,10 +216,10 @@ class _UnisocExecutor(BaseExecutor):
 
         if "Downloading..." in line:
             self.progress += 1
-            return self.progress * 10
+            return line[:50], self.progress * 10
 
         if "DownLoad Passed" in line:
-            return 100
+            return line[:50], 100
 
         if "[ERROR] DownLoad Failed" in line:
             raise Exception('Unisoc FW Download Failed.')
@@ -214,15 +231,15 @@ class _360WExecutor(BaseExecutor):
         try:
             data = json.loads(line)
         except Exception as e:
-            return 1
+            return line, 1
 
         if data['Status'] == 'Programming':
-            return data['Progress']
+            return line, data['Progress']
         else:
             if data['Status'] == 'Ready':
-                return 5
+                return line, 5
             elif data['Status'] == 'Finished' and data['Message'] == 'Success':
-                return 100
+                return line, 100
             else:
                 raise Exception('360W Download Failed!')
 
@@ -245,7 +262,7 @@ class _EIGENExecutor(BaseExecutor):
                 f.write(line)
                 logger.info(line)
                 self.parse(line)
-                yield self.progress
+                yield line, self.progress
 
             # pkg2img
             logger.info("---------- pkg2img ----------")
@@ -257,7 +274,7 @@ class _EIGENExecutor(BaseExecutor):
                 f.write(line)
                 logger.info(line)
                 self.parse(line)
-                yield self.progress
+                yield line, self.progress
 
             # 烧录固件
             logger.info("---------- Burn firmware ----------")
@@ -269,7 +286,7 @@ class _EIGENExecutor(BaseExecutor):
                 f.write(line)
                 logger.info(line)
                 self.parse(line)
-                yield self.progress
+                yield line, self.progress
 
             # 下载 ap_application.bin文件
             logger.info("---------- Download ap_application.bin flasherase ----------")
@@ -282,7 +299,7 @@ class _EIGENExecutor(BaseExecutor):
                 f.write(line)
                 logger.info(line)
                 self.parse(line)
-                yield self.progress
+                yield line, self.progress
             logger.info("---------- Download ap_application.bin burnone ----------")
             cmd5 = self.cmd[:1] + ["--skipconnect", "1"] + self.cmd[1:] + ["burnone", "flexfile2"]
             logger.info('cmd5: {}'.format(cmd5))
@@ -292,7 +309,7 @@ class _EIGENExecutor(BaseExecutor):
                 f.write(line)
                 logger.info(line)
                 self.parse(line)
-                yield self.progress
+                yield line, self.progress
 
             # 下载 ap_updater.bin文件
             logger.info("---------- Download ap_updater.bin flasherase ----------")
@@ -305,7 +322,7 @@ class _EIGENExecutor(BaseExecutor):
                 f.write(line)
                 logger.info(line)
                 self.parse(line)
-                yield self.progress
+                yield line, self.progress
             logger.info("---------- Download ap_updater.bin burnone ----------")
             cmd7 = self.cmd[:1] + ["--skipconnect", "1"] + self.cmd[1:] + ["burnone", "flexfile3"]
             logger.info('cmd7: {}'.format(cmd7))
@@ -315,7 +332,7 @@ class _EIGENExecutor(BaseExecutor):
                 f.write(line)
                 logger.info(line)
                 self.parse(line)
-                yield self.progress
+                yield line, self.progress
 
             # 下载 customer_fs.bin文件
             logger.info("---------- Download customer_fs.bin flasherase ----------")
@@ -328,7 +345,7 @@ class _EIGENExecutor(BaseExecutor):
                 f.write(line)
                 logger.info(line)
                 self.parse(line)
-                yield self.progress
+                yield line, self.progress
             logger.info("---------- Download customer_fs.bin burnone ----------")
             cmd9 = self.cmd[:1] + ["--skipconnect", "1"] + self.cmd[1:] + ["burnone", "flexfile4"]
             logger.info('cmd9: {}'.format(cmd9))
@@ -338,7 +355,7 @@ class _EIGENExecutor(BaseExecutor):
                 f.write(line)
                 logger.info(line)
                 self.parse(line)
-                yield self.progress
+                yield line, self.progress
 
             if self.extra['File_Count'] == 4:
                 # 下载 customer_backup_fs.bin 文件
@@ -352,7 +369,7 @@ class _EIGENExecutor(BaseExecutor):
                     f.write(line)
                     logger.info(line)
                     self.parse(line)
-                    yield self.progress
+                    yield line, self.progress
                 logger.info("---------- Download customer_backup_fs.bin burnone ----------")
                 cmd11 = self.cmd[:1] + ["--skipconnect", "1"] + self.cmd[1:] + ["burnone", "flexfile5"]
                 logger.info('cmd11: {}'.format(cmd11))
@@ -362,7 +379,7 @@ class _EIGENExecutor(BaseExecutor):
                     f.write(line)
                     logger.info(line)
                     self.parse(line)
-                    yield self.progress
+                    yield line, self.progress
 
             # 重启模块
             logger.info("---------- sysreset ----------")
@@ -374,7 +391,7 @@ class _EIGENExecutor(BaseExecutor):
                 f.write(line)
                 logger.info(line)
                 self.parse(line)
-                yield self.progress
+                yield line, self.progress
             yield 100
 
     def parse(self, line):

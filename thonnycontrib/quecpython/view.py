@@ -126,7 +126,7 @@ class QuecView(tk.Frame):
         self.log_stringvar = tk.StringVar()
         self.log_stringvar.set(tr('ready'))
         log_entry = tk.Label(fw_label_frame, textvariable=self.log_stringvar)
-        log_entry.grid(row=3, column=1, sticky=tk.W, padx=(0, 5), pady=(5, 5))
+        log_entry.grid(row=3, column=1, columnspan=11, sticky=tk.W, padx=(0, 5), pady=(5, 5))
         # <<<
 
         # >>> 订阅
@@ -197,7 +197,7 @@ class QuecView(tk.Frame):
 
         rv = {'port': comport, 'baudrate': '115200'}
 
-        if comport in ("NB_DOWNLOAD", "ASR1803S_DOWNLOAD", "mbn_DOWNLOAD", "WIFI_DOWNLOAD"):
+        if comport in ("NB_DOWNLOAD", "mbn_DOWNLOAD", "WIFI_DOWNLOAD"):
             if (self.serial is None) or (not self.serial.isOpen()):
                 messagebox.showinfo(
                     title=tr('Choose a COM Port'),
@@ -235,18 +235,6 @@ class QuecView(tk.Frame):
         else:
             self.set_com_widgets_state(tk.DISABLED)
 
-    def get_validated_fw_file_path(self):
-        firmware_file_path = self.firmware_file_path_stringvar.get()
-        logger.info('firmware_file_path: {}'.format(firmware_file_path))
-        if not firmware_file_path:
-            messagebox.showerror(
-                title=tr('Error'),
-                message=tr('no firmware file path selected!'),
-                master=self
-            )
-            return
-        return firmware_file_path
-
     def download_widgets_ready(self):
         self.fw_file_choose_button.config(state=tk.DISABLED)
         self.fw_download_button.config(state=tk.DISABLED)
@@ -256,11 +244,25 @@ class QuecView(tk.Frame):
         self.update()
 
     def download_firmware_handler(self):
-        firmware_file_path = self.get_validated_fw_file_path()
+        firmware_file_path = self.firmware_file_path_stringvar.get()
+        logger.info('firmware_file_path: {}'.format(firmware_file_path))
         if not firmware_file_path:
+            messagebox.showerror(
+                title=tr('Error'),
+                message=tr('no firmware file path selected!'),
+                master=self
+            )
             return
 
-        fw_file_path, platform = get_fw_and_platform(firmware_file_path)
+        rv = get_fw_and_platform(firmware_file_path)
+        if rv is None:
+            messagebox.showerror(
+                title=tr('Error'),
+                message=tr('unknow platform!'),
+                master=self
+            )
+            return
+        fw_file_path, platform = rv
         logger.info('fw file: {}'.format(fw_file_path))
         logger.info('platform: {}'.format(platform))
 
@@ -286,10 +288,10 @@ class QuecView(tk.Frame):
                     master=self
                 )
                 return
-            self.progress_stringvar.set("{}%".format(payload.data))
-            self.bar["value"] = payload.data
-            self.log_stringvar.set(tr('downloading...'))
-            self.update()
+            self.progress_stringvar.set("{}%".format(payload.data[1]))
+            self.bar["value"] = payload.data[1]
+            self.log_stringvar.set('{:100s}'.format(payload.data[0].strip()))
+            # self.update()
         elif payload.code == DownLoadFWApi.EXIT:
             if payload.exec:
                 messagebox.showerror(
@@ -298,7 +300,6 @@ class QuecView(tk.Frame):
                     master=self
                 )
             else:
-                self.log_stringvar.set(tr('download process exited.'))
                 messagebox.showinfo(
                     title=tr('Information'),
                     message=tr('Download Firmware Progress Finished!'),

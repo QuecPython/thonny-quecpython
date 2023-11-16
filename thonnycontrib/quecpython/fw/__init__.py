@@ -39,7 +39,7 @@ class FwDownloadHandler(object):
             logger.info('fw_filepath: \"{}\".'.format(self.fw_filepath))
             if self.platform.upper() in ["ASR", "ASR1601", "ASR1606"]:
                 return self.asrFwDownload()
-            elif self.platform.lower() in ["unisoc", "unisoc8910", "unisoc8850"]:
+            elif self.platform.upper() in ["UNISOC", "UNISOC8910", "UNISOC8850"]:
                 return self.rdaFwDownload()
             elif self.platform.upper() == "RDA8908A":
                 return self.nbFwDownload()
