@@ -191,28 +191,28 @@ class FwDownloadHandler(object):
         shutil.copytree(fdir1, str(Path(tmp_path) / "fw"))
         shutil.copytree(str(EXES_PATH / "Eigen"), str(Path(tmp_path) / "Eigen"))
 
+        extra = dict()
         try:
             config = configparser.ConfigParser(interpolation=None)
             logger.info('quec_download_config.ini path: {}'.format(str(Path(tmp_path) / "fw/quec_download_config.ini")))
             config.read(str(Path(tmp_path) / "fw/quec_download_config.ini"))
             File_Count = int(config.get('File', 'File_Count'))
+            extra['File_Count'] = File_Count
 
             ap_application_addr = config.get('File_1', 'START_ADDR')
             ap_application_max = config.get('File_1', 'MAX_SIZE')
             flexfile2 = ap_application_addr + " " + ap_application_max
+            extra['flexfile2'] = flexfile2
 
             ap_updater_addr = config.get('File_2', 'START_ADDR')
             ap_updater_max = config.get('File_2', 'MAX_SIZE')
             flexfile3 = ap_updater_addr + " " + ap_updater_max
+            extra['flexfile3'] = flexfile3
 
             customer_fs_addr = config.get('File_3', 'START_ADDR')
             customer_fs_max = config.get('File_3', 'MAX_SIZE')
             flexfile4 = customer_fs_addr + " " + customer_fs_max
-
-            if File_Count == 4:
-                customer_backup_fs_addr = config.get('File_4', 'START_ADDR')
-                customer_backup_fs_max = config.get('File_4', 'MAX_SIZE')
-                flexfile5 = customer_backup_fs_addr + " " + customer_backup_fs_max
+            extra['flexfile4'] = flexfile4
 
             binpkg_config = configparser.ConfigParser(interpolation=None)
             binpkg_config_ini = str(Path(tmp_path) / "Eigen/config.ini")
@@ -233,7 +233,13 @@ class FwDownloadHandler(object):
 
             binpkg_config.set('flexfile4', 'filepath', str(Path(tmp_path) / "fw/customer_fs.bin"))
             binpkg_config.set('flexfile4', 'burnaddr', customer_fs_addr)
+
             if File_Count == 4:
+                customer_backup_fs_addr = config.get('File_4', 'START_ADDR')
+                customer_backup_fs_max = config.get('File_4', 'MAX_SIZE')
+                flexfile5 = customer_backup_fs_addr + " " + customer_backup_fs_max
+                extra['flexfile5'] = flexfile5
+
                 binpkg_config.set('flexfile5', 'filepath',
                                        str(Path(tmp_path) / "fw/customer_backup_fs.bin"))
                 binpkg_config.set('flexfile5', 'burnaddr', customer_backup_fs_addr)
@@ -246,15 +252,6 @@ class FwDownloadHandler(object):
         binpkg_config.set('config', 'line_0_com', self.com_info['port'])
         with open(binpkg_config_ini, "w+", encoding='utf-8') as f:
             binpkg_config.write(f)
-
-        extra = dict(
-            File_Count=File_Count,
-            flexfile2=flexfile2,
-            flexfile3=flexfile3,
-            flexfile4=flexfile4,
-        )
-        if File_Count == 4:
-            extra.update(dict(flexfile5=flexfile5))
 
         return self.fw_download(
             str(Path(tmp_path) / "Eigen/flashtoolcli1.exe"),

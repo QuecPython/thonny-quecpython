@@ -234,7 +234,6 @@ class _EIGENExecutor(BaseExecutor):
         super().__init__(cmd, cwd, **extra)
 
     def progress_rate(self):
-        # [download_name, '--cfgfile '+self.binpkg_config_ini, '--port="%s"'%comport]
         with DownloadLogFile() as f:
             # 检测连接
             logger.info("---------- detect link ----------")
