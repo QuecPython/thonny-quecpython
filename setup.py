@@ -54,6 +54,11 @@ setup(
             "exes/NB/*",
             "exes/rda/*",
             "exes/Eigen/*",
+            "exes/Eigen/image_ec618/*",
+            "exes/Eigen/image_ec618/agentboot_uart/*",
+            "exes/Eigen/image_ec618/agentboot_usb/*",
+            "exes/Eigen/image_ec618/pkgdir/*",
+            "exes/Eigen/image_ec618/pkgdir/pkg_extract_tmp/*",
         ],
         "thonnycontrib.quecpython.locale": [
             "zh_CN.lag",

@@ -39,6 +39,7 @@ class Process(object):
     def run(self):
         self.proc = subprocess.Popen(
             self.cmd,
+            shell=True,
             cwd=self.cwd,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
