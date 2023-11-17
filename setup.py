@@ -53,6 +53,7 @@ setup(
             "exes/blf_tools/*",
             "exes/NB/*",
             "exes/rda/*",
+            "exes/Eigen/*",
         ],
         "thonnycontrib.quecpython.locale": [
             "zh_CN.lag",
