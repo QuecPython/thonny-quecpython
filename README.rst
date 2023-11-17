@@ -3,6 +3,7 @@ News
 
 - June 2023: thonny-quecpython 0.1.1 released! (for those -- and only those -- who use Python >= 3.7).
 - October 2023: thonny-quecpython 0.1.8 released!
+- November 2023: thonny-quecpython 0.2.0 released!
 
 Overview
 ========
