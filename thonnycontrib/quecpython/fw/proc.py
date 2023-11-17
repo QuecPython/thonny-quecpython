@@ -428,6 +428,6 @@ def run_cmd(cmd, platform, cwd, **extra):
         # FCM360WAAMD-OP-04 test passed with `QPY_OCPU_BETA0001_FCM360W_FW`
         executor = _FCM360WExecutor(cmd, cwd)
     else:
-        pass
+        raise ValueError('{} not supported!'.format(platform))
 
     return executor.progress_rate()

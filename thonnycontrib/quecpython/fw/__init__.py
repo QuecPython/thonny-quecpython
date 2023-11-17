@@ -289,9 +289,9 @@ class FwDownloadHandler(object):
             cmd = [download_exe_path, '-p', self.com_info['port'][3:], '-b', "921600", '-file', fw_filepath]
             print('------------------ FCM360W downloading factory package: ------------------')
         elif self.platform.upper() == "FC41D":
-            pass
+            raise ValueError('{} not supported!'.format(self.platform))
         else:
-            pass
+            raise ValueError('{} not supported!'.format(self.platform))
 
         logger.info('run cmd: {}'.format(cmd))
         return run_cmd(cmd, self.platform, str(Path(download_exe_path).parent), **extra)
