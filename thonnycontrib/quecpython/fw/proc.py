@@ -225,7 +225,7 @@ class _UnisocExecutor(BaseExecutor):
             raise Exception('Unisoc FW Download Failed.')
 
 
-class _360WExecutor(BaseExecutor):
+class _FCM360WExecutor(BaseExecutor):
 
     def parse(self, line):
         try:
@@ -241,7 +241,7 @@ class _360WExecutor(BaseExecutor):
             elif data['Status'] == 'Finished' and data['Message'] == 'Success':
                 return line, 100
             else:
-                raise Exception('360W Download Failed!')
+                raise Exception('FCM360W Download Failed!\n{}'.format(line.strip()))
 
 
 class _EIGENExecutor(BaseExecutor):
@@ -392,7 +392,7 @@ class _EIGENExecutor(BaseExecutor):
                 logger.info(line)
                 self.parse(line)
                 yield line, self.progress
-            yield 100
+            yield line, 100
 
     def parse(self, line):
         if "RtsConditionAssign" in line:
@@ -407,19 +407,26 @@ def run_cmd(cmd, platform, cwd, **extra):
     logger.info('enter run_cmd method, args: {}'.format((cmd, platform, cwd,)))
 
     if platform.upper() in ["ASR", "ASR1601", "ASR1606"]:
+        # EC600M-CNLA test passed with `EC600MCNLAR01A01M08_XBND_OCPU_QPY_BETA0831`
         executor = _AsrExecutor(cmd, cwd)
     elif platform.upper() in ["UNISOC", "UNISOC8910", "UNISOC8850"]:
+        # EG912U-GLAA test passed with `QPY_BETA0001_EG912U_GLAA_FW`
         executor = _UnisocExecutor(cmd, cwd)
     elif platform.upper() == "RDA8908A":
+        # BC25PA test passed with `QPY_V0003_BC25PA_FW`
         executor = _NBExecutor(cmd, cwd)
     elif platform.upper() == "ASR1803S":
+        # EC200A-EUHA test passed with `QPY_V0002_EC200A_AUHA_FW` and `QPY_V0003_EC200A_AUHA_FW`
         executor = _200AExecutor(cmd, cwd)
     elif platform.upper() == "MDM9X05":
+        # BG95M3-LA test passed with `QPY_OCPU_BETA0002_BG95M3_FW` and `QPY_OCPU_BETA0003_BG95M3_FW`
         executor = _BG95Executor(cmd, cwd)
     elif platform.upper() == "EIGEN":
+        # EC800E-CNLC test passed with `EC800ECNLCR02A01M04_OCPU_QPY_BETA0713`
         executor = _EIGENExecutor(cmd, cwd, **extra)
     elif platform.upper() == "FCM360W":
-        executor = _360WExecutor(cmd, cwd)
+        # FCM360WAAMD-OP-04 test passed with `QPY_OCPU_BETA0001_FCM360W_FW`
+        executor = _FCM360WExecutor(cmd, cwd)
     else:
         pass
 

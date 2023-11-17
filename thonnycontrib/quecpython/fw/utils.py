@@ -146,7 +146,7 @@ def makeCleanDir(Dir):
             return False
 
 
-def get_com_port(fw_file_path, platform):
+def get_com_port(platform):
     cmd = 'at+qdownload=1'
     fw_config = json.load(open(str(Path(__file__).with_name('fw_config.json')), 'r'))
     if platform.upper() in ["UNISOC", "UNISOC8910", "UNISOC8850"]:

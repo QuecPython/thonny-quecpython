@@ -184,8 +184,8 @@ class QuecView(tk.Frame):
         else:
             self.port_combobox.current(0)
 
-    def get_validated_com_port(self, fw_file_path, platform):
-        comport = get_com_port(fw_file_path, platform)
+    def get_validated_com_port(self, platform):
+        comport = get_com_port(platform)
         logger.info('detect comport is: {}'.format(comport))
         if comport is None:
             messagebox.showerror(
@@ -266,7 +266,7 @@ class QuecView(tk.Frame):
         logger.info('fw file: {}'.format(fw_file_path))
         logger.info('platform: {}'.format(platform))
 
-        com_info = self.get_validated_com_port(fw_file_path, platform)
+        com_info = self.get_validated_com_port(platform)
         if not com_info:
             return
 
@@ -290,7 +290,7 @@ class QuecView(tk.Frame):
                 return
             self.progress_stringvar.set("{}%".format(payload.data[1]))
             self.bar["value"] = payload.data[1]
-            self.log_stringvar.set('{:100s}'.format(payload.data[0].strip()))
+            self.log_stringvar.set('{:100s}'.format(payload.data[0].strip()[:100]))
             # self.update()
         elif payload.code == DownLoadFWApi.EXIT:
             if payload.exec:
