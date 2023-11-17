@@ -291,7 +291,7 @@ class _EIGENExecutor(BaseExecutor):
             # 下载 ap_application.bin文件
             logger.info("---------- Download ap_application.bin flasherase ----------")
             flexfile2 = self.extra['flexfile2']
-            cmd4 = self.cmd[:1] + ["--skipconnect", "1"] + self.cmd[1:] + ["flasherase"] + [flexfile2]
+            cmd4 = self.cmd[:1] + ["--skipconnect", "1"] + self.cmd[1:] + ["flasherase"] + flexfile2
             logger.info('cmd4: {}'.format(cmd4))
             p = Process(cmd4)
             p.run()
@@ -314,7 +314,7 @@ class _EIGENExecutor(BaseExecutor):
             # 下载 ap_updater.bin文件
             logger.info("---------- Download ap_updater.bin flasherase ----------")
             flexfile3 = self.extra['flexfile3']
-            cmd6 = self.cmd[:1] + ["--skipconnect", "1"] + self.cmd[1:] + ["flasherase"] + [flexfile3]
+            cmd6 = self.cmd[:1] + ["--skipconnect", "1"] + self.cmd[1:] + ["flasherase"] + flexfile3
             logger.info('cmd6: {}'.format(cmd6))
             p = Process(cmd6)
             p.run()
@@ -337,7 +337,7 @@ class _EIGENExecutor(BaseExecutor):
             # 下载 customer_fs.bin文件
             logger.info("---------- Download customer_fs.bin flasherase ----------")
             flexfile4 = self.extra['flexfile4']
-            cmd8 = self.cmd[:1] + ["--skipconnect", "1"] + self.cmd[1:] + ["flasherase"] + [flexfile4]
+            cmd8 = self.cmd[:1] + ["--skipconnect", "1"] + self.cmd[1:] + ["flasherase"] + flexfile4
             logger.info('cmd8: {}'.format(cmd8))
             p = Process(cmd8)
             p.run()
@@ -361,7 +361,7 @@ class _EIGENExecutor(BaseExecutor):
                 # 下载 customer_backup_fs.bin 文件
                 logger.info("---------- Download customer_backup_fs.bin flasherase ----------")
                 flexfile5 = self.extra['flexfile5']
-                cmd10 = self.cmd[:1] + ["--skipconnect", "1"] + self.cmd[1:] + ["flasherase"] + [flexfile5]
+                cmd10 = self.cmd[:1] + ["--skipconnect", "1"] + self.cmd[1:] + ["flasherase"] + flexfile5
                 logger.info('cmd10: {}'.format(cmd10))
                 p = Process(cmd10)
                 p.run()
@@ -392,7 +392,7 @@ class _EIGENExecutor(BaseExecutor):
                 logger.info(line)
                 self.parse(line)
                 yield line, self.progress
-            yield line, 100
+            yield 'download process finished.', 100
 
     def parse(self, line):
         if "RtsConditionAssign" in line:

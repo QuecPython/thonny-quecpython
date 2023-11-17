@@ -201,17 +201,17 @@ class FwDownloadHandler(object):
 
             ap_application_addr = config.get('File_1', 'START_ADDR')
             ap_application_max = config.get('File_1', 'MAX_SIZE')
-            flexfile2 = ap_application_addr + " " + ap_application_max
+            flexfile2 = [ap_application_addr, ap_application_max]
             extra['flexfile2'] = flexfile2
 
             ap_updater_addr = config.get('File_2', 'START_ADDR')
             ap_updater_max = config.get('File_2', 'MAX_SIZE')
-            flexfile3 = ap_updater_addr + " " + ap_updater_max
+            flexfile3 = [ap_updater_addr, ap_updater_max]
             extra['flexfile3'] = flexfile3
 
             customer_fs_addr = config.get('File_3', 'START_ADDR')
             customer_fs_max = config.get('File_3', 'MAX_SIZE')
-            flexfile4 = customer_fs_addr + " " + customer_fs_max
+            flexfile4 = [customer_fs_addr, customer_fs_max]
             extra['flexfile4'] = flexfile4
 
             binpkg_config = configparser.ConfigParser(interpolation=None)
@@ -224,8 +224,7 @@ class FwDownloadHandler(object):
             binpkg_config.set('system', 'syspath', str(Path(tmp_path) / "sysloadskip = 0"))
             binpkg_config.set('cp_system', 'cp_syspath', str(Path(tmp_path) / "cp_sysloadskip = 0"))
 
-            binpkg_config.set('flexfile2', 'filepath',
-                                   str(Path(tmp_path) / "fw/ap_application.bin"))
+            binpkg_config.set('flexfile2', 'filepath', str(Path(tmp_path) / "fw/ap_application.bin"))
             binpkg_config.set('flexfile2', 'burnaddr', ap_application_addr)
 
             binpkg_config.set('flexfile3', 'filepath', str(Path(tmp_path) / "fw/ap_updater.bin"))
@@ -237,7 +236,7 @@ class FwDownloadHandler(object):
             if File_Count == 4:
                 customer_backup_fs_addr = config.get('File_4', 'START_ADDR')
                 customer_backup_fs_max = config.get('File_4', 'MAX_SIZE')
-                flexfile5 = customer_backup_fs_addr + " " + customer_backup_fs_max
+                flexfile5 = [customer_backup_fs_addr, customer_backup_fs_max]
                 extra['flexfile5'] = flexfile5
 
                 binpkg_config.set('flexfile5', 'filepath',
