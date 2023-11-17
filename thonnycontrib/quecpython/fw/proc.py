@@ -116,7 +116,7 @@ class BaseExecutor(object):
                 if rv:
                     yield rv
 
-    def parser(self, line):
+    def parse(self, line):
         raise NotImplementedError
 
 
@@ -150,6 +150,7 @@ class _AsrExecutor(BaseExecutor):
         else:
             self.log_string = line
             return self.log_string, self.progress
+
 
 class _200AExecutor(BaseExecutor):
 
