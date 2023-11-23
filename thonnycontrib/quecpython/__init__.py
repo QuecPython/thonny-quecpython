@@ -11,6 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import sys
+from pathlib import Path
+# make sure thonnycontrib in sys.path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from thonny import get_workbench
 from .backend.mp_front import (

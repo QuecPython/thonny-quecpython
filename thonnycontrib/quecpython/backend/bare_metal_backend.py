@@ -21,6 +21,9 @@ import time
 from logging import getLogger
 from textwrap import dedent, indent
 from typing import BinaryIO, Callable, List, Optional, Union
+from pathlib import Path
+# make sure thonnycontrib in sys.path
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 # make sure thonny folder is in sys.path (relevant in dev)
 thonny_container = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))))
