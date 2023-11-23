@@ -181,8 +181,6 @@ class QuecView(tk.Frame):
         current_port_str = self.port_combobox.get()
         if current_port_str in rv:
             self.port_combobox.set(current_port_str)
-        else:
-            self.port_combobox.current(0)
 
     def get_validated_com_port(self, platform):
         comport = get_com_port(platform)
